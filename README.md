@@ -22,7 +22,7 @@ The config.h is not deleted each build and must be deleted manualy for the chang
 
 ## Patches
 
-I have still not introduced any patches.
+I have still not have not introduced any patches.
 
 ## Recommended binaries
 
