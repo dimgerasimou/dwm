@@ -4,7 +4,7 @@
 
 dwm is an extremely fast, small, and dynamic window manager for X.
 This is my build of dwm.
-`dwm version 6.3`
+dwm `--version 6.3`
 
 ## Requirements
 
@@ -28,4 +28,5 @@ I have still not introduced any patches.
 
 ### dmenu
 dmenu is a dynamic menu for X, originally designed for dwm. It manages large numbers of user-defined menu items efficiently.
+
 Source code: https://git.suckless.org/dmenu
