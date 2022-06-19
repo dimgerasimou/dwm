@@ -1,48 +1,31 @@
-dwm - dynamic window manager
-============================
+# dwm - dynamic window manager
+
+## Introductiom
+
 dwm is an extremely fast, small, and dynamic window manager for X.
+This is my build of dwm.
+`dwm version 6.3`
 
+## Requirements
 
-Requirements
-------------
-In order to build dwm you need the Xlib header files.
+The only requirments to build dwm are the Xlib Header files.
 
+## Installation
 
-Installation
-------------
-Edit config.mk to match your local setup (dwm is installed into
-the /usr/local namespace by default).
+Edit config.mk to match your local setup (dwm is installed into the /usr/local namespace by default).
 
-Afterwards enter the following command to build and install dwm (if
-necessary as root):
+Afterwards enter the following command to build and install dwm (if necessary as root):
 
-    make clean install
+`make clean install`
 
+The config.h is not deleted each build and must be deleted manualy for the changes on config.def.h to take effect.
 
-Running dwm
------------
-Add the following line to your .xinitrc to start dwm using startx:
+## Patches
 
-    exec dwm
+I have still not introduced any patches.
 
-In order to connect dwm to a specific display, make sure that
-the DISPLAY environment variable is set correctly, e.g.:
+## Recommended binaries
 
-    DISPLAY=foo.bar:1 exec dwm
-
-(This will start dwm on display :1 of the host foo.bar.)
-
-In order to display status info in the bar, you can do something
-like this in your .xinitrc:
-
-    while xsetroot -name "`date` `uptime | sed 's/.*,//'`"
-    do
-    	sleep 1
-    done &
-    exec dwm
-
-
-Configuration
--------------
-The configuration of dwm is done by creating a custom config.h
-and (re)compiling the source code.
+### dmenu
+dmenu is a dynamic menu for X, originally designed for dwm. It manages large numbers of user-defined menu items efficiently.
+Source code: https://git.suckless.org/dmenu
