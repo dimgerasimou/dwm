@@ -1,0 +1,4 @@
+#!/bin/bash
+
+~/.dwm-start.sh
+exec dwm
