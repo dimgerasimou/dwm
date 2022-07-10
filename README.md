@@ -20,6 +20,8 @@ Afterwards enter the following command to build and install dwm (if necessary as
 
 The config.h is not deleted each build and must be deleted manualy for the changes on config.def.h to take effect.
 
+Moreover the `install.sh` can be used that copies a set of configuration scripts and the .desktop file for sddm.
+
 ## Patches
 
 I have still not have not introduced any patches.
