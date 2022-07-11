@@ -1,10 +1,10 @@
 #!/bin/bash
-#Script that compiles dwm, and then copies all files nessesary to run my dwm build from sddm.
-#Script that must be run from dwm repo main folder.
+# Script that compiles dwm, and then copies all files nessesary to run my dwm build from sddm.
+# Script that must be run from dwm repo main folder.
 
-#Functions-----------------------------------------------------------
+# Functions-----------------------------------------------------------
 
-#Yes no function.
+# Yes no function.
 function yesNo {
 	DEFAULT="y"
 
@@ -18,7 +18,7 @@ function yesNo {
 	fi
 }
 
-#Check package installation function
+# Check package installation function
 function havei {
 	package="$1"
 	if $(pacman -Qi $package &>/dev/null); then
@@ -50,43 +50,36 @@ function correctDirectory {
 
 #Script--------------------------------------------------------------
 
-#Check for help input.
+# Check for help input.
 if [[ "$1" == "--help" || "$1" == "-h" ]]; then
 	printhelp
 	exit
 fi
 
 
-#Check for root privilages.
+# Check for root privilages.
 if (( $EUID != 0 )); then
 	echo "Please run as root"
 		exit
 fi
 
-#Check if script is in correct directory
+# Check if script is in correct directory
 correctDirectory
 
-#Variable to set if feh will be installed
+# Variable to set if feh will be installed
 WITHFEH=true
 
-#Check for feh and whatever to install it or not.
+# Check for feh and whatever to install it or not.
 if [ "$1" == "--no-feh" ]; then
 	WITHFEH=false
 else
 	havei feh
 fi
 
-#Install dwm to usr/local/bin.
+# Install dwm to usr/local/bin.
 make clean install
 
-#Copy scripts for sddm integration with or without feh
-cp /scripts/dwm.desktop /usr/share/xsessions/dwm.desktop
-cp /scripts/dwm-start /usr/local/bin/dwm-start
-
-if [ "$WITHFEH" = true ]; then
-	cp /scripts/dwm-start.sh ~/.dwm-start.sh
-else
-	cp /scrpits/dwm-start-nofeh.sh ~/.dwm-start.sh
-fi
+# Copy dwm-start script to /usr/local/bin
+cp /scripts/dwm-start /usr/local/bin
 
 echo "Done!"
