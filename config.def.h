@@ -26,9 +26,10 @@ static const char *colors[][3]      = {
 };
 
 /* audio control */
-static const char *volumeup[]       = { "/usr/bin/pamixer",    "--increase",    "5",    NULL };
-static const char *volumedown[]     = { "/usr/bin/pamixer",    "--decrease",    "5",    NULL };
-static const char *volumemute[]     = { "/usr/bin/pamixer",    "--toggle-mute",         NULL };
+static const char *volumeup[]       = { "/home/dimgerasimou/dwm/scripts/volumecontrol",    "--volume",    "--raise",    NULL };
+static const char *volumedown[]     = { "/home/dimgerasimou/dwm/scripts/volumecontrol",    "--volume",    "--lower",    NULL };
+static const char *volumemute[]     = { "/home/dimgerasimou/dwm/scripts/volumecontrol",    "--volume",    "--mute",     NULL };
+static const char *mutemic[]        = { "/home/dimgerasimou/dwm/scripts/volumecontrol",    "--microphone","--mute",     NULL };
 
 /* brightness control */
 static const char *brightnessup[]   = { "/usr/bin/brightnessctl", "--class=backlight", "set", "+5%", NULL };
@@ -114,10 +115,11 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_period,     tagmon,         {.i = +1 } },
 
 	/* fn keys utilities */
-	{ 0,                            XF86XK_AudioMute,          spawn,    {.v = volumemute} },
-	{ 0,                            XF86XK_AudioRaiseVolume,   spawn,    {.v = volumeup} },
-	{ 0,                            XF86XK_AudioLowerVolume,   spawn,    {.v = volumedown} },
-	{ 0,                            XF86XK_MonBrightnessUp,    spawn,    {.v = brightnessup} },
+	{ 0,                            XF86XK_AudioMute,          spawn,    {.v = volumemute}     },
+	{ 0,                            XF86XK_AudioRaiseVolume,   spawn,    {.v = volumeup}       },
+	{ 0,                            XF86XK_AudioLowerVolume,   spawn,    {.v = volumedown}     },
+	{ 0,                            XF86XK_AudioMicMute,       spawn,    {.v = mutemic}        },
+	{ 0,                            XF86XK_MonBrightnessUp,    spawn,    {.v = brightnessup}   },
 	{ 0,                            XF86XK_MonBrightnessDown,  spawn,    {.v = brightnessdown} },
 
 	/* tagkeys */
