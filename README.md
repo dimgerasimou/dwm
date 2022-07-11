@@ -9,6 +9,8 @@ dwm `--version 6.3`
 ## Requirements
 
 The only requirments to build dwm are the Xlib Header files.
+brightnessctl
+
 
 ## Installation
 

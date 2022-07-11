@@ -1,7 +1,10 @@
 /* See LICENSE file for copyright and license details. */
 
+#include <X11/XF86keysym.h>
+#define soundsink "alsa_output.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__hw_sofhdadsp__sink"
+
 /* appearance */
-static const unsigned int borderpx  = 1;        /* border pixel of windows */
+static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systrayonleft = 0;   	/* 0: systray in the right corner, >0: systray on left of status text */
@@ -23,6 +26,15 @@ static const char *colors[][3]      = {
 	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
 };
 
+/* audio control */
+static const char *volumeup[]       = { "/usr/bin/pactl", "set-sink-volume", soundsink, "+5%",    NULL };
+static const char *volumedown[]     = { "/usr/bin/pactl", "set-sink-volume", soundsink, "-5%",    NULL };
+static const char *volumemute[]     = { "/usr/bin/pactl", "set-sink-mute",   soundsink, "toggle", NULL };
+
+/* brightness control */
+static const char *brightnessup[]   = { "/usr/bin/brightnessctl", "--class=backlight", "set", "+5%", NULL };
+static const char *brightnessdown[] = { "/usr/bin/brightnessctl", "--class=backlight", "set", "5%-", NULL };
+
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
@@ -33,7 +45,8 @@ static const Rule rules[] = {
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	{ "Firefox",  NULL,       NULL,       9,            0,           -1 },
+	{ "Dolphin",  NULL,       NULL,       0,            1,           -1 }
 };
 
 /* layout(s) */
@@ -70,11 +83,15 @@ static const char *browsercmd[] = { "firefox", NULL };
 
 static Key keys[] = {
 	/* modifier                     key            function        argument */
+
+	/* application spawning */
 	{ MODKEY,                       XK_p,          spawn,          {.v = dmenucmd }   },
 	{ MODKEY|ShiftMask,             XK_Return,     spawn,          {.v = termcmd }    },
 	{ MODKEY,                       XK_w,          spawn,          {.v = browsercmd } },
 	{ MODKEY,                       XK_e,          spawn,          {.v = emailcmd }   },
 	{ MODKEY,                       XK_r,          spawn,          {.v = filecmd }    },
+
+	/* dwm control */
 	{ MODKEY,                       XK_b,          togglebar,      {0} },
 	{ MODKEY,                       XK_j,          focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,          focusstack,     {.i = -1 } },
@@ -96,6 +113,15 @@ static Key keys[] = {
 	{ MODKEY,                       XK_period,     focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,      tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period,     tagmon,         {.i = +1 } },
+
+	/* fn keys utilities */
+	{ 0,                            XF86XK_AudioMute,          spawn,    {.v = volumemute} },
+	{ 0,                            XF86XK_AudioRaiseVolume,   spawn,    {.v = volumeup} },
+	{ 0,                            XF86XK_AudioLowerVolume,   spawn,    {.v = volumedown} },
+	{ 0,                            XF86XK_MonBrightnessUp,    spawn,    {.v = brightnessup} },
+	{ 0,                            XF86XK_MonBrightnessDown,  spawn,    {.v = brightnessdown} },
+
+	/* tagkeys */
 	TAGKEYS(                        XK_1,                          0)
 	TAGKEYS(                        XK_2,                          1)
 	TAGKEYS(                        XK_3,                          2)
