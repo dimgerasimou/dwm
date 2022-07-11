@@ -1,7 +1,6 @@
 /* See LICENSE file for copyright and license details. */
 
 #include <X11/XF86keysym.h>
-#define soundsink "alsa_output.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__hw_sofhdadsp__sink"
 
 /* appearance */
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
@@ -27,9 +26,9 @@ static const char *colors[][3]      = {
 };
 
 /* audio control */
-static const char *volumeup[]       = { "/usr/bin/pactl", "set-sink-volume", soundsink, "+5%",    NULL };
-static const char *volumedown[]     = { "/usr/bin/pactl", "set-sink-volume", soundsink, "-5%",    NULL };
-static const char *volumemute[]     = { "/usr/bin/pactl", "set-sink-mute",   soundsink, "toggle", NULL };
+static const char *volumeup[]       = { "/usr/bin/pamixer",    "--increase",    "5",    NULL };
+static const char *volumedown[]     = { "/usr/bin/pamixer",    "--decrease",    "5",    NULL };
+static const char *volumemute[]     = { "/usr/bin/pamixer",    "--toggle-mute",         NULL };
 
 /* brightness control */
 static const char *brightnessup[]   = { "/usr/bin/brightnessctl", "--class=backlight", "set", "+5%", NULL };
