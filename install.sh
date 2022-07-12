@@ -15,6 +15,7 @@ function printhelp {
 	echo "Builds dwm and copies the correct scripts in their directories."
 	echo ""
 	echo "WARNING: do not run as root."
+	echo "You will be promted for your password as the script is running."
 	echo ""
 	echo "    --help          prints this menu then exits."
 	echo "    --no-build      does not build dwm."
@@ -56,7 +57,7 @@ if (( $EUID == 0 )); then
 fi
 
 # Check if script is in correct directory.
-if [[ -f "config.mk" ]]; then
+if [[ -s build/config.mk ]]; then
 	echo "In correct directory."
 else
 	echo "Script not in correct directory."
@@ -69,13 +70,13 @@ if [ $BUILD == 1 ]; then
 		rm dwminstalllog.txt
 	fi
 
-	if [ $CONFIG == 0 ] && [ -s config.h ]; then
+	if [ $CONFIG == 0 ] && [ -s build/config.h ]; then
 		echo "Deleting config.h"
-		rm -f config.h
+		rm -f build/config.h
 	fi
 
 	echo "Building dwm."
-	sudo make clean install 1> /dev/null 2>dwminstalllog.txt
+	sudo make --directory=build clean install 1> /dev/null 2>dwminstalllog.txt
 	
 	if [[ -s dwminstalllog.txt ]]; then
 		echo "Error with building. Check Logs at .dwminstalllog in this directory."
