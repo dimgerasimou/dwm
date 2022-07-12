@@ -1,6 +1,6 @@
 #!/bin/bash
 #  ____   ____
-# |  _ \ / ___|    Dimitrs Gerasimou (dimgerasimou)
+# |  _ \ / ___|    Dimitris Gerasimou (dimgerasimou)
 # | | | | |  _     <dimgerasimou@gmail.com>
 # | |_| | |_| |    https://github.com/dimgerasimou
 # |____/ \____|
@@ -32,22 +32,21 @@ CONFIG=1
 for var in "$@"
 do
 
-# Check for help input.
-if [[ "$var" == "--help" || "$var" == "-h" ]]; then
-	printhelp
-	exit
-fi
+	# Check for help input.
+	if [[ "$var" == "--help" || "$var" == "-h" ]]; then
+		printhelp
+		exit
+	fi
 
-# Check for build.
-if [[ "$var" == "--no-build" ]]; then
-	BUILD=0
-fi
+	# Check for build.
+	if [[ "$var" == "--no-build" ]]; then
+		BUILD=0
+	fi
 
-# Check for config.h deletion.
-if [[ "$var" == "--no-config" ]]; then
-	CONFIG=1
-fi
-
+	# Check for config.h deletion.
+	if [[ "$var" == "--no-config" ]]; then
+		CONFIG=1
+	fi
 done
 
 # Check for root privilages.

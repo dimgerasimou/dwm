@@ -1,5 +1,5 @@
 /*  ____   ____                                          */
-/* |  _ \ / ___|    Dimitrs Gerasimou (dimgerasimou)     */
+/* |  _ \ / ___|    Dimitris Gerasimou (dimgerasimou)    */
 /* | | | | |  _     <dimgerasimou@gmail.com>             */
 /* | |_| | |_| |    https://github.com/dimgerasimou      */
 /* |____/ \____|                                         */
