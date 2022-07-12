@@ -9,8 +9,10 @@ dwm `--version 6.3`
 ## Requirements
 
 The only requirments to build dwm are the Xlib Header files.
-brightnessctl
 
+Packages:
+- brightnessctl
+- pamixer
 
 ## Installation
 
@@ -22,11 +24,12 @@ Afterwards enter the following command to build and install dwm (if necessary as
 
 The config.h is not deleted each build and must be deleted manualy for the changes on config.def.h to take effect.
 
-Moreover the `install.sh` can be used that copies a set of configuration scripts and the .desktop file for sddm.
+Moreover the `install.sh` can be used aids with the whole installation. Builds dwm and copies all neccesary scripts in the proper places.
 
 ## Patches
 
-I have still not have not introduced any patches.
+Patches installed:
+- systray
 
 ## Recommended binaries
 

@@ -1,8 +1,8 @@
 #!/bin/sh
 #
-# Script that raises, lowers, or mutes volume or microphone and updates the dwmblock
+# Script that raises, lowers, or mutes volume or microphone and updates the dwmblocks signal.
 #
-# Author: Dimitris Gerasimou <dimgerasimou@gmail.com>
+# Author: Dimitris Gerasimou <dimgerasimou@gmail.com> http://github.com/dimgerasimou
 #
 
 #Check whatever input is about mic or volume
