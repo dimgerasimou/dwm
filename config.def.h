@@ -30,10 +30,10 @@ static const char *colors[][3]      = {
 };
 
 /* audio control */
-static const char *volumeup[]   = { "~/.local/bin/dwm/dwm/volumecontrol",    "--volume",        "--raise",    NULL };
-static const char *volumedown[] = { "~/.local/bin/dwm/dwm/volumecontrol",    "--volume",        "--lower",    NULL };
-static const char *volumemute[] = { "~/.local/bin/dwm/dwm/volumecontrol",    "--volume",        "--mute",     NULL };
-static const char *mutemic[]    = { "~/.local/bin/dwm/dwm/volumecontrol",    "--microphone",    "--mute",     NULL };
+static const char *volumeup[]   = { "/home/dimgerasimou/.local/bin/dwm/dwm/volumecontrol",    "--volume",        "--raise",    NULL };
+static const char *volumedown[] = { "/home/dimgerasimou/.local/bin/dwm/dwm/volumecontrol",    "--volume",        "--lower",    NULL };
+static const char *volumemute[] = { "/home/dimgerasimou/.local/bin/dwm/dwm/volumecontrol",    "--volume",        "--mute",     NULL };
+static const char *mutemic[]    = { "/home/dimgerasimou/.local/bin/dwm/dwm/volumecontrol",    "--microphone",    "--mute",     NULL };
 
 /* brightness control */
 static const char *brightnessup[]   = { "/usr/bin/brightnessctl",    "--class=backlight",    "set",    "+5%",    NULL };
