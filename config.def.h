@@ -117,7 +117,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_period,     focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,      tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period,     tagmon,         {.i = +1 } },
-
+	{ MODKEY|ControlMask,           XK_space,      focusmaster,    {0} },
 	/* fn keys utilities */
 	{ 0,                            XF86XK_AudioMute,          spawn,    {.v = volumemute}     },
 	{ 0,                            XF86XK_AudioRaiseVolume,   spawn,    {.v = volumeup}       },
