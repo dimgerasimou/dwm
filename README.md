@@ -30,7 +30,8 @@ Moreover the `install.sh` can be used aids with the whole installation. Builds d
 
 Patches installed:
 - systray
-
+- restartsig
+- focusmaster
 ## Recommended binaries
 
 ### dmenu

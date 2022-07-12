@@ -1,17 +1,8 @@
-From 8f662e7a556f94bda83ec724fb036e15b2badaac Mon Sep 17 00:00:00 2001
-From: Jack Bird <jack.bird@durham.ac.uk>
-Date: Fri, 27 Aug 2021 01:14:44 +0100
-Subject: [PATCH] 6.2 focusmaster return
-
----
- dwm.c | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
-
-diff --git a/dwm.c b/dwm.c
-index 4465af1..5219cbd 100644
---- a/dwm.c
-+++ b/dwm.c
-@@ -127,6 +127,7 @@ struct Monitor {
+diff --git a/build/dwm.c b/build/dwm.c
+index 04bf496..7735c02 100644
+--- a/build/dwm.c
++++ b/build/dwm.c
+@@ -143,6 +143,7 @@ struct Monitor {
  	Client *clients;
  	Client *sel;
  	Client *stack;
@@ -19,15 +10,15 @@ index 4465af1..5219cbd 100644
  	Monitor *next;
  	Window barwin;
  	const Layout *lt[2];
-@@ -167,6 +168,7 @@ static void enternotify(XEvent *e);
+@@ -189,6 +190,7 @@ static void enternotify(XEvent *e);
  static void expose(XEvent *e);
  static void focus(Client *c);
  static void focusin(XEvent *e);
 +static void focusmaster(const Arg *arg);
  static void focusmon(const Arg *arg);
  static void focusstack(const Arg *arg);
- static int getrootptr(int *x, int *y);
-@@ -659,6 +661,10 @@ detach(Client *c)
+ static Atom getatomprop(Client *c, Atom prop);
+@@ -760,6 +762,11 @@ detach(Client *c)
  {
  	Client **tc;
  
@@ -35,10 +26,11 @@ index 4465af1..5219cbd 100644
 +		if (c == c->mon->tagmarked[i])
 +			c->mon->tagmarked[i] = NULL;
 +
++
  	for (tc = &c->mon->clients; *tc && *tc != c; tc = &(*tc)->next);
  	*tc = c->next;
  }
-@@ -815,6 +821,34 @@ focusin(XEvent *e)
+@@ -926,6 +933,34 @@ focusin(XEvent *e)
  		setfocus(selmon->sel);
  }
  
@@ -73,7 +65,7 @@ index 4465af1..5219cbd 100644
  void
  focusmon(const Arg *arg)
  {
-@@ -1202,6 +1236,11 @@ nexttiled(Client *c)
+@@ -1339,6 +1374,11 @@ nexttiled(Client *c)
  void
  pop(Client *c)
  {
@@ -85,6 +77,16 @@ index 4465af1..5219cbd 100644
  	detach(c);
  	attach(c);
  	focus(c);
--- 
-2.33.0
-
+diff --git a/config.def.h b/config.def.h
+index e2dceb7..07f42a7 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -117,7 +117,7 @@ static Key keys[] = {
+ 	{ MODKEY,                       XK_period,     focusmon,       {.i = +1 } },
+ 	{ MODKEY|ShiftMask,             XK_comma,      tagmon,         {.i = -1 } },
+ 	{ MODKEY|ShiftMask,             XK_period,     tagmon,         {.i = +1 } },
+-
++	{ MODKEY|ControlMask,           XK_space,      focusmaster,    {0} },
+ 	/* fn keys utilities */
+ 	{ 0,                            XF86XK_AudioMute,          spawn,    {.v = volumemute}     },
+ 	{ 0,                            XF86XK_AudioRaiseVolume,   spawn,    {.v = volumeup}       },
