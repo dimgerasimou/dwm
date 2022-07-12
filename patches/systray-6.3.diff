@@ -31,10 +31,10 @@ index a2ac963..4be4c06 100644
  	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
  	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
  	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
-diff --git a/dwm.c b/dwm.c
+diff --git a/build/dwm.c b/build/dwm.c
 index a96f33c..941c1c0 100644
---- a/dwm.c
-+++ b/dwm.c
+--- a/build/dwm.c
++++ b/build/dwm.c
 @@ -57,12 +57,27 @@
  #define TAGMASK                 ((1 << LENGTH(tags)) - 1)
  #define TEXTW(X)                (drw_fontset_getwidth(drw, (X)) + lrpad)
