@@ -32,6 +32,8 @@ Patches installed:
 - systray
 - restartsig
 - focusmaster
+- decorhints
+
 ## Recommended binaries
 
 ### dmenu
