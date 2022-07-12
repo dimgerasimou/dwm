@@ -24,7 +24,7 @@ Afterwards enter the following command to build and install dwm (if necessary as
 
 The config.h is not deleted each build and must be deleted manualy for the changes on config.def.h to take effect.
 
-Moreover the `install.sh` can be used aids with the whole installation. Builds dwm and copies all neccesary scripts in the proper places.
+Moreover the `install.sh` can be used to aid with the whole installation. Builds dwm and copies all neccesary scripts in the proper places.
 
 ## Patches
 
