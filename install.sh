@@ -95,8 +95,8 @@ fi
 echo "Copying dwm-start to /usr/local/bin"
 sudo cp scripts/dwm-start /usr/local/bin 1> /dev/null 2>dwmcopyscriptslog.txt
 
-# Copy volume control script to ~/.local/bin/dwmblocks
-echo "Copying volumecontrol to ~/.local/bin/dwmblocks"
+# Copy volume control script to ~/.local/bin/dwm/dwm
+echo "Copying volumecontrol to ~/.local/bin/dwm/dwm"
 cp scripts/volumecontrol "$HOME"/.local/bin/dwm/dwm/volumecontrol 1> /dev/null 2>dwmcopyscriptslog.txt
 
 # Copy dwm.desktop to /usr/share/xsessions
