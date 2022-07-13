@@ -38,6 +38,7 @@ Patches installed:
 - rotatestack
 - attachaside
 - swallow
+- center
 
 ## Recommended binaries
 

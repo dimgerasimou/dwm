@@ -1,0 +1,83 @@
+diff --git a/build/dwm.c b/build/dwm.c
+index 5730b18..1308f15 100644
+--- a/build/dwm.c
++++ b/build/dwm.c
+@@ -122,7 +122,7 @@ struct Client {
+ 	int basew, baseh, incw, inch, maxw, maxh, minw, minh, hintsvalid;
+ 	int bw, oldbw;
+ 	unsigned int tags;
+-	int isfixed, iscentered, isfloating, isurgent, neverfocus, oldstate, isfullscreen, isterminal, noswallow;
++	int isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen, isterminal, noswallow;
+ 	pid_t pid;
+ 	Client *next;
+ 	Client *snext;
+@@ -170,7 +170,6 @@ typedef struct {
+ 	const char *instance;
+ 	const char *title;
+ 	unsigned int tags;
+-	int iscentered;
+ 	int isfloating;
+ 	int isterminal;
+ 	int noswallow;
+@@ -357,7 +356,6 @@ applyrules(Client *c)
+ 	XClassHint ch = { NULL, NULL };
+ 
+ 	/* rule matching */
+-	c->iscentered = 0;
+ 	c->isfloating = 0;
+ 	c->tags = 0;
+ 	XGetClassHint(dpy, c->win, &ch);
+@@ -372,7 +370,6 @@ applyrules(Client *c)
+ 		{
+ 			c->isterminal = r->isterminal;
+ 			c->noswallow  = r->noswallow;
+-			c->iscentered = r->iscentered;
+ 			c->isfloating = r->isfloating;
+ 			c->tags |= r->tags;
+ 			for (m = mons; m && m->num != r->monitor; m = m->next);
+@@ -1342,10 +1339,6 @@ manage(Window w, XWindowAttributes *wa)
+ 	updatewindowtype(c);
+ 	updatesizehints(c);
+ 	updatewmhints(c);
+-	if (c->iscentered) {
+-		c->x = c->mon->mx + (c->mon->mw - WIDTH(c)) / 2;
+-		c->y = c->mon->my + (c->mon->mh - HEIGHT(c)) / 2;
+-	}
+ 	updatemotifhints(c);
+ 	XSelectInput(dpy, w, EnterWindowMask|FocusChangeMask|PropertyChangeMask|StructureNotifyMask);
+ 	grabbuttons(c, 0);
+@@ -2646,10 +2639,8 @@ updatewindowtype(Client *c)
+ 
+ 	if (state == netatom[NetWMFullscreen])
+ 		setfullscreen(c, 1);
+-	if (wtype == netatom[NetWMWindowTypeDialog]) {
+-		c->iscentered = 1;
++	if (wtype == netatom[NetWMWindowTypeDialog])
+ 		c->isfloating = 1;
+-	}
+ }
+ 
+ void
+diff --git a/config.def.h b/config.def.h
+index d7f0e4e..0169f84 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -48,12 +48,12 @@ static const Rule rules[] = {
+ 	 *	WM_CLASS(STRING) = instance, class
+ 	 *	WM_NAME(STRING) = title
+ 	 */
+-	/* class      instance    title            tags mask    iscentered    isfloating    isterminal    noswallow    monitor */
+-	{ "Gimp",     NULL,       NULL,            0,           0,            1,            0,            0,           -1 },
+-	{ "Firefox",  NULL,       NULL,            1 << 8,      1,            0,            0,            -1,          -1 },
+-	{ "Dolphin",  NULL,       NULL,            0,           0,            1,            0,            0,           -1 },
+-	{ "Alacritty",NULL,       NULL,            0,           0,            0,            1,            0,           -1 },
+-	{ NULL,       NULL,       "Event Tester",  0,           0,            0,            0,            1,           -1 },
++	/* class      instance    title            tags mask    isfloating    isterminal    noswallow    monitor */
++	{ "Gimp",     NULL,       NULL,            0,           1,            0,            0,           -1 },
++	{ "Firefox",  NULL,       NULL,            1 << 8,      0,            0,            -1,          -1 },
++	{ "Dolphin",  NULL,       NULL,            0,           1,            0,            0,           -1 },
++	{ "Alacritty",NULL,       NULL,            0,           0,            1,            0,           -1 },
++	{ NULL,       NULL,       "Event Tester",  0,           0,            0,            1,           -1 },
+ };
+ 
+ /* layout(s) */
