@@ -2,11 +2,11 @@
 #
 # Custom dwm startup script.
 #
-# Author: Dimitris Gerasimou <dimgerasimou@gmail.com> http://github.com/dimgerasimou
+# Author: Dimitris Gerasimou <https://github.com/dimgerasimou>
 #
 
 # Set Wallpaper
-feh --bg-fill /home/dimgerasimou/Pictures/Wallpapers/star_destroyer.jpg
+feh --bg-fill $HOME/Pictures/Wallpapers/star_destroyer.jpg
 
 # Start tray applets
 #/usr/bin/optimus-manager-qt &

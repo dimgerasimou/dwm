@@ -1,8 +1,8 @@
 #!/bin/bash
 #  ____   ____
 # |  _ \ / ___|    Dimitris Gerasimou (dimgerasimou)
-# | | | | |  _     <dimgerasimou@gmail.com>
-# | |_| | |_| |    https://github.com/dimgerasimou
+# | | | | |  _     <https://github.com/dimgerasimou>
+# | |_| | |_| |
 # |____/ \____|
 #
 # Script that aids with the installation of dwm. Can build dwm, and copy

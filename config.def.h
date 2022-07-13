@@ -1,7 +1,7 @@
 /*  ____   ____                                          */
 /* |  _ \ / ___|    Dimitris Gerasimou (dimgerasimou)    */
-/* | | | | |  _     <dimgerasimou@gmail.com>             */
-/* | |_| | |_| |    https://github.com/dimgerasimou      */
+/* | | | | |  _     <https://github.com/dimgerasimou>    */
+/* | |_| | |_| |                                         */
 /* |____/ \____|                                         */
 /*                                                       */
 /* My dwm configuration file                             */
