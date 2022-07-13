@@ -35,6 +35,7 @@ Patches installed:
 - focusmaster
 - decorhints
 - noborderfloatingfix
+- rotatestack
 
 ## Recommended binaries
 
