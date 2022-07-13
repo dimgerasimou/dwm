@@ -34,6 +34,7 @@ Patches installed:
 - restartsig
 - focusmaster
 - decorhints
+- noborderfloatingfix
 
 ## Recommended binaries
 
