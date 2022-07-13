@@ -36,6 +36,7 @@ Patches installed:
 - decorhints
 - noborderfloatingfix
 - rotatestack
+- attachaside
 
 ## Recommended binaries
 
