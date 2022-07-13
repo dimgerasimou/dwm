@@ -37,6 +37,7 @@ Patches installed:
 - noborderfloatingfix
 - rotatestack
 - attachaside
+- swallow
 
 ## Recommended binaries
 
