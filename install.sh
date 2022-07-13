@@ -16,16 +16,22 @@ function printhelp {
 	echo ""
 	echo "WARNING: do not run as root."
 	echo "You will be promted for your password as the script is running."
+	echo "On Arch Linux if sudo prompts right password as wrong, check if"
+	echo "systemd-homed service is running."
 	echo ""
 	echo "    --help          prints this menu then exits."
 	echo "    --no-build      does not build dwm."
-	echo "    --no-config     delete config.h before building."
+	echo "    --delete-config deletes config.h before building."
+	echo "    --clean         cleans the directory from extra files then exits."
+	echo "    --uninstall     uninstalls dwm binary and all scripts."
 }
 
 # Script--------------------------------------------------------------
 
 BUILD=1
 CONFIG=1
+UNINSTALL=0
+CLEAN=0
 
 # Checking arguments:
 
@@ -44,8 +50,18 @@ do
 	fi
 
 	# Check for config.h deletion.
-	if [[ "$var" == "--no-config" ]]; then
-		CONFIG=1
+	if [[ "$var" == "--delete-config" ]]; then
+		CONFIG=0
+	fi
+
+	# Check for clean build.
+	if [[ "$var" == "--clean" ]]; then
+		CLEAN=1
+	fi
+
+	# Check for uninstall.
+	if [[ "$var" == "--uninstall" ]]; then
+		UNINSTALL=1
 	fi
 done
 
@@ -63,6 +79,67 @@ else
 	exit
 fi
 
+# Clean build.
+if [ $CLEAN == 1 ]; then
+	# Check that logfile does not exist.
+	if [ -s cleanlog.txt ]; then
+		rm -f cleanlog.txt
+	fi
+	
+	echo "Cleaning build directory."
+	make --directory=build clean 1> /dev/null 2> cleanlog.txt
+	if [ -s build/config.h ]; then
+		echo "Deleting config.h."
+		rm -f build/config.h 1> /dev/null 2> cleanlog.txt
+	fi
+
+	if [ -s cleanlog.txt ]; then
+		echo "Error with clean. View cleanlog.txt for details."
+	else	
+		echo "Done!"
+		rm -f cleanlog.txt
+	fi
+	exit
+fi
+
+# Uninstallation script.
+if [ $UNINSTALL == 1 ]; then
+	# Check that logfile doesn't exist.
+	if [ -s uninstalllog.txt ]; then
+		rm -f uninstalllog.txt
+	fi
+
+	#Make uninstall script and clean.
+	echo "Uninstalling dwm binary and man."
+	sudo make --directory=build uninstall 1> /dev/null 2> uninstalllog.txt
+	"${0}" --clean
+	
+	# Removing scripts from their designated places
+	if [ -s /usr/local/bin/dwm-start ]; then
+		echo "Deleting dwm-start script."
+		sudo rm -f /usr/local/bin/dwm-start 1> /dev/null 2> uninstalllog.txt
+	fi
+	
+	if [ -s $HOME/.local/bin/dwm/dwm/volumecontrol ]; then
+		echo "Deleting volumecontrol script."
+		rm -f $HOME/.local/bin/dwm/dwm/volumecontrol 1> /dev/null 2> uninstalllog.txt
+	fi
+
+	if [ -s /usr/share/xsessions/dwm.desktop ]; then
+		echo "Deleting dwm-start script."
+		sudo rm -f /usr/share/xsessions/dwm.desktop 1> /dev/null 2> uninstalllog.txt
+	fi
+
+	if [ -s uninstalllog.txt ]; then
+		echo "Uninstalling finished with errors. Check uninstalllog.txt."
+	else
+		echo "Done!"
+		rm -f uninstalllog.txt
+	fi
+	exit
+fi
+
+
 # Install dwm to usr/local/bin.
 if [ $BUILD == 1 ]; then
 	if [[ -s dwminstalllog.txt ]]; then
@@ -70,8 +147,7 @@ if [ $BUILD == 1 ]; then
 	fi
 
 	if [ $CONFIG == 0 ] && [ -s build/config.h ]; then
-		echo "Deleting config.h"
-		rm -f build/config.h
+		"${0}" --clean
 	fi
 
 	echo "Building dwm."
