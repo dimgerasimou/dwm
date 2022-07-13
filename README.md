@@ -13,6 +13,7 @@ The only requirments to build dwm are the Xlib Header files.
 Packages:
 - brightnessctl
 - pamixer
+- feh
 
 ## Installation
 
