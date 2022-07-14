@@ -39,6 +39,7 @@ Patches installed:
 - attachaside
 - swallow
 - center
+- gridlayout
 
 ## Recommended binaries
 

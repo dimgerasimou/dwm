@@ -1,0 +1,60 @@
+diff --git a/build/layouts.c b/build/layouts.c
+deleted file mode 100644
+index 43352b4..0000000
+--- a/build/layouts.c
++++ /dev/null
+@@ -1,27 +0,0 @@
+-void
+-grid(Monitor *m) {
+-	unsigned int i, n, cx, cy, cw, ch, aw, ah, cols, rows;
+-	Client *c;
+-
+-	for(n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next))
+-		n++;
+-
+-	/* grid dimensions */
+-	for(rows = 0; rows <= n/2; rows++)
+-		if(rows*rows >= n)
+-			break;
+-	cols = (rows && (rows - 1) * rows >= n) ? rows - 1 : rows;
+-
+-	/* window geoms (cell height/width) */
+-	ch = m->wh / (rows ? rows : 1);
+-	cw = m->ww / (cols ? cols : 1);
+-	for(i = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next)) {
+-		cx = m->wx + (i / rows) * cw;
+-		cy = m->wy + (i % rows) * ch;
+-		/* adjust height/width of last row/column's windows */
+-		ah = ((i + 1) % rows == 0) ? m->wh - ch * rows : 0;
+-		aw = (i >= rows * (cols - 1)) ? m->ww - cw * cols : 0;
+-		resize(c, cx, cy, cw - 2 * c->bw + aw, ch - 2 * c->bw + ah, False);
+-		i++;
+-	}
+-}
+\ No newline at end of file
+diff --git a/config.def.h b/config.def.h
+index 24e390f..181c8f1 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -65,13 +65,11 @@ static const int resizehints = 1;    /* 1 means respect size hints in tiled resi
+ static const int decorhints  = 1;    /* 1 means respect decoration hints */
+ static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
+ 
+-#include "layouts.c"
+ static const Layout layouts[] = {
+ 	/* symbol     arrange function */
+ 	{ "[]=",      tile },    /* first entry is default */
+ 	{ "><>",      NULL },    /* no layout function means floating behavior */
+ 	{ "[M]",      monocle },
+-	{ "HHH",      grid },
+ };
+ 
+ /* key definitions */
+@@ -119,7 +117,6 @@ static Key keys[] = {
+ 	{ MODKEY,                       XK_t,          setlayout,      {.v = &layouts[0]} },
+ 	{ MODKEY,                       XK_f,          setlayout,      {.v = &layouts[1]} },
+ 	{ MODKEY,                       XK_m,          setlayout,      {.v = &layouts[2]} },
+-	{ MODKEY,                       XK_g,          setlayout,      {.v = &layouts[3]} },
+ 	{ MODKEY,                       XK_space,      setlayout,      {0} },
+ 	{ MODKEY|ShiftMask,             XK_space,      togglefloating, {0} },
+ 	{ MODKEY,                       XK_0,          view,           {.ui = ~0 } },
