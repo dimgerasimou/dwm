@@ -32,7 +32,7 @@ Moreover the `install.sh` can be used to aid with the whole installation. Builds
 ## Patches
 
 Patches installed:
-	-	alpha
+- alpha
 
 
 ### dmenu
