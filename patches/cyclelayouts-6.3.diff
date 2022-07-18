@@ -1,0 +1,79 @@
+diff --git a/build/dwm.1 b/build/dwm.1
+index 63271c1..7b6cadb 100644
+--- a/build/dwm.1
++++ b/build/dwm.1
+@@ -92,12 +92,6 @@ Sets monocle layout.
+ .B Mod1\-space
+ Toggles between current and previous layout.
+ .TP
+-.B Mod1\-Control\-,
+-Cycles backwards in layout list.
+-.TP
+-.B Mod1\-Control\-.
+-Cycles forwards in layout list.
+-.TP
+ .B Mod1\-j
+ Focus next window.
+ .TP
+diff --git a/build/dwm.c b/build/dwm.c
+index 363f332..abf6ad6 100644
+--- a/build/dwm.c
++++ b/build/dwm.c
+@@ -204,7 +204,6 @@ static void configure(Client *c);
+ static void configurenotify(XEvent *e);
+ static void configurerequest(XEvent *e);
+ static Monitor *createmon(void);
+-static void cyclelayout(const Arg *arg);
+ static void destroynotify(XEvent *e);
+ static void detach(Client *c);
+ static void detachstack(Client *c);
+@@ -877,23 +876,6 @@ createmon(void)
+ 	return m;
+ }
+ 
+-void
+-cyclelayout(const Arg *arg) {
+-	Layout *l;
+-	for(l = (Layout *)layouts; l != selmon->lt[selmon->sellt]; l++);
+-	if(arg->i > 0) {
+-		if(l->symbol && (l + 1)->symbol)
+-			setlayout(&((Arg) { .v = (l + 1) }));
+-		else
+-			setlayout(&((Arg) { .v = layouts }));
+-	} else {
+-		if(l != layouts && (l - 1)->symbol)
+-			setlayout(&((Arg) { .v = (l - 1) }));
+-		else
+-			setlayout(&((Arg) { .v = &layouts[LENGTH(layouts) - 2] }));
+-	}
+-}
+-
+ void
+ destroynotify(XEvent *e)
+ {
+diff --git a/config.def.h b/config.def.h
+index 455cc48..b07f968 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -78,7 +78,6 @@ static const Layout layouts[] = {
+ 	{ "><>",      NULL },    /* no layout function means floating behavior */
+ 	{ "[M]",      monocle },
+ 	{ "HHH",      grid },
+-	{ NULL,       NULL },
+ };
+ 
+ /* key definitions */
+@@ -123,13 +122,9 @@ static Key keys[] = {
+ 	{ MODKEY,                       XK_Return,     zoom,           {0} },
+ 	{ MODKEY,                       XK_Tab,        view,           {0} },
+ 	{ MODKEY|ShiftMask,             XK_BackSpace,  killclient,     {0} },
+-	
+-	/* layouts */
+ 	{ MODKEY,                       XK_t,          setlayout,      {.v = &layouts[0]} },
+ 	{ MODKEY,                       XK_f,          setlayout,      {.v = &layouts[1]} },
+ 	{ MODKEY,                       XK_m,          setlayout,      {.v = &layouts[2]} },
+-	{ MODKEY|ControlMask,           XK_comma,      cyclelayout,    {.i = -1 } },
+-	{ MODKEY|ControlMask,           XK_period,     cyclelayout,    {.i = +1 } },	
+ 	{ MODKEY,                       XK_g,          setlayout,      {.v = &layouts[3]} },
+ 	{ MODKEY,                       XK_space,      setlayout,      {0} },
+ 	{ MODKEY|ShiftMask,             XK_space,      togglefloating, {0} },

@@ -41,6 +41,7 @@ Patches installed:
 - center
 - gridlayout
 - vanitygaps
+- cyclelayouts
 
 ## Recommended binaries
 
