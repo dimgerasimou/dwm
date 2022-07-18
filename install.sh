@@ -142,6 +142,51 @@ fi
 
 # Install dwm to usr/local/bin.
 if [ $BUILD == 1 ]; then
+	PKG1=0
+	PKG2=0
+	PKG3=0
+	PKG4=0
+	pckglist="feh pamixer brightnessctl picom"
+	if [[ -s /usr/bin/pacman ]]; then
+		gr='\e[32m'
+		nr='\e[39m'
+		if $(pacman -Qi feh &>/dev/null); then
+			PKG1=1
+			echo "    [ ✓ ] feh is installed."
+		else
+			echo "    [ ❌] feh is not installed."
+		fi
+		if $(pacman -Qi pamixer &> /dev/null); then
+			PKG2=1
+			echo "    [ ✓ ] pamixer is installed."
+		else
+			echo "    [ ❌] pamixer is not installed."
+		fi
+		if $(pacman -Qi brightnessctl &> /dev/null); then
+			PKG3=1
+			echo "    [ ✓ ] brightnessctl is installed."
+		else
+			echo "    [ ❌] brightnessctl is not installed."
+		fi
+		if $(pacman -Qi picom &> /dev/null); then
+			PKG4=1
+			echo "    [ ✓ ] picom is installed."
+		else
+			echo "    [ ❌] picom is not installed."
+		fi
+		if [ $PKG1 == 0 ] || [ $PKG2 == 0 ] || [ $PKG3 == 0 ] || [ $PKG4 == 0 ]; then
+			echo "Not all dependencies are installed. Install them manually."
+			exit 1
+		fi
+	else
+		read "Not running Arch. Please check that all dependencies are installed. Continue? [y/N]" yn
+		case $yn in
+			[Yy] ) break;;
+			* ) exit 1;;
+		esac
+	fi
+
+
 	if [[ -s dwminstalllog.txt ]]; then
 		rm dwminstalllog.txt
 	fi

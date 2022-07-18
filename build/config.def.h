@@ -6,6 +6,9 @@
 /*                                                        */
 /* My dwm configuration file.                             */
 
+/* Header definitions ------------------------------------*/
+#define VOLCNTRLPATH "/home/dimgerasimou/.local/bin/dwm/dwm/volumecontrol"
+
 /* Appearance --------------------------------------------*/
 
 /* borders */
@@ -81,6 +84,16 @@ static const char *browsercmd[] = { "firefox", NULL };
 static const char *emailcmd[]   = { "thunderbird", NULL };
 static const char *fmgercmd[]   = { "dolphin", NULL };
 
+/* Volume control */
+static const char *volumeup[]   = { VOLCNTRLPATH, "--volume",     "--raise", NULL };
+static const char *volumedown[] = { VOLCNTRLPATH, "--volume",     "--lower", NULL };
+static const char *volumemute[] = { VOLCNTRLPATH, "--volume",     "--mute",  NULL };
+static const char *micmute[]    = { VOLCNTRLPATH, "--microphone", "--mute",  NULL };
+
+/* Brightness control */
+static const char *brightup[]   = { "/usr/bin/brightnessctl", "--class=backlight", "set", "+5%", NULL };
+static const char *brightdown[] = { "/usr/bin/brightnessctl", "--class=backlight", "set", "5%-", NULL };
+
 /* Keybinds ----------------------------------------------*/
 
 static Key keys[] = {
@@ -117,6 +130,15 @@ static Key keys[] = {
 	{ MODKEY,                       XK_period,     focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,      tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period,     tagmon,         {.i = +1 } },
+    
+	/* FN keys */
+	{ 0,                            XF86XK_AudioRaiseVolume, spawn, {.v = volumeup } },
+	{ 0,                            XF86XK_AudioLowerVolume, spawn, {.v = volumedown } },
+	{ 0,                            XF86XK_AudioMute,        spawn, {.v = volumemute } },
+	{ 0,                            XF86XK_AudioMicMute,     spawn, {.v = micmute } },
+
+	{ 0,                            XF86XK_MonBrightnessUp,  spawn, {.v = brightup } },
+	{ 0,                            XF86XK_MonBrightnessDown,spawn, {.v = brightdown } },
 
 	/* tagkeys */
 	TAGKEYS(                        XK_1,                          0)
