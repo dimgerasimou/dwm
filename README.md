@@ -40,6 +40,7 @@ Patches installed:
 - swallow
 - center
 - gridlayout
+- vanitygaps
 
 ## Recommended binaries
 
