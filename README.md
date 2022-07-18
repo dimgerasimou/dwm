@@ -42,7 +42,7 @@ Patches installed:
 - gridlayout
 - vanitygaps
 - cyclelayouts
-
+- xresources 
 ## Recommended binaries
 
 ### dmenu
