@@ -3,12 +3,19 @@
 ## Introductiom
 
 dwm is an extremely fast, small, and dynamic window manager for X.
-This is my build of dwm.
-dwm `--version 6.3`
+This is my build of dwm for version 6.3.
+
 
 ## Requirements
 
 The only requirments to build dwm are the Xlib Header files.
+
+Packages:
+
+- brightnessctl
+- pamixer
+- feh
+- picom
 
 ## Installation
 
@@ -20,13 +27,14 @@ Afterwards enter the following command to build and install dwm (if necessary as
 
 The config.h is not deleted each build and must be deleted manualy for the changes on config.def.h to take effect.
 
+Moreover the `install.sh` can be used to aid with the whole installation. Builds dwm and copies all neccesary scripts in the proper places.
+
 ## Patches
 
-I have still not have not introduced any patches.
-
-## Recommended binaries
+Patches installed:
 
 ### dmenu
+
 dmenu is a dynamic menu for X, originally designed for dwm. It manages large numbers of user-defined menu items efficiently.
 
 Source code: https://git.suckless.org/dmenu

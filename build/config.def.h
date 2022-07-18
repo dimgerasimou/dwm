@@ -1,4 +1,10 @@
-/* See LICENSE file for copyright and license details. */
+/*  ____   ____                                          */
+/* |  _ \ / ___|    Dimitris Gerasimou (dimgerasimou)    */
+/* | | | | |  _     <https://github.com/dimgerasimou>    */
+/* | |_| | |_| |                                         */
+/* |____/ \____|                                         */
+/*                                                       */
+/* My dwm configuration file.                            */
 
 /* appearance */
 static const unsigned int borderpx  = 1;        /* border pixel of windows */

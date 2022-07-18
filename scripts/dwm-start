@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# Custom dwm startup script.
+#
+# Author: Dimitris Gerasimou <https://github.com/dimgerasimou>
+#
+
+# Set Wallpaper
+feh --bg-fill $HOME/Pictures/Wallpapers/star_destroyer.jpg
+
+# Start tray applets
+#/usr/bin/optimus-manager-qt &
+
+# Start dwmblocks
+/usr/local/bin/dwmblocks &
+
+# Start picom
+/usr/bin/picom &
+
+# Start dwm
+/usr/local/bin/dwm

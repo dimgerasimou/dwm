@@ -1,5 +1,5 @@
-config.h
-dwm
-dwm.o
-drw.o
-util.o
+build/config.h
+build/dwm
+build/dwm.o
+build/drw.o
+build/util.o
