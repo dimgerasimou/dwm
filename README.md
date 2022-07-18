@@ -34,6 +34,7 @@ Moreover the `install.sh` can be used to aid with the whole installation. Builds
 Patches installed:
 - alpha
 - restartsig
+- vanitygaps
 
 ### dmenu
 
