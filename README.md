@@ -17,7 +17,7 @@ Packages:
 - feh
 - picom
 - libxft-bgra (for emoji support)
-
+- qt5ct (for qt5 application theme support)
 ## Installation
 
 Edit config.mk to match your local setup (dwm is installed into the /usr/local namespace by default).
