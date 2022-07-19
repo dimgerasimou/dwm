@@ -16,6 +16,7 @@ Packages:
 - pamixer
 - feh
 - picom
+- libxft-bgra (for emoji support)
 
 ## Installation
 
