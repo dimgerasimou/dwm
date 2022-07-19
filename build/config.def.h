@@ -12,7 +12,7 @@
 /* Appearance --------------------------------------------*/
 
 /* borders */
-static const unsigned int borderpx  = 1;                        /* border pixel of windows */
+static const unsigned int borderpx  = 2;                        /* border pixel of windows */
 static const unsigned int snap      = 32;                       /* snap pixel */
 
 /* vanity gaps */
@@ -64,6 +64,7 @@ static const Rule rules[] = {
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
 	{ "firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	{ "dolphin",  NULL,       NULL,       0,            1,           -1 },
 };
 
 /* layout(s) */
@@ -71,6 +72,7 @@ static const float mfact     = 0.55;                           /* factor of mast
 static const int nmaster     = 1;                              /* number of clients in master area */
 static const int resizehints = 1;                              /* 1 means respect size hints in tiled resizals */
 static const int lockfullscreen = 1;                           /* 1 will force focus on the fullscreen window */
+static const int decorhints  = 1;                              /* 1 means respect decoration hints */
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
