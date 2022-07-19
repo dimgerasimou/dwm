@@ -35,6 +35,7 @@ Patches installed:
 - alpha
 - restartsig
 - vanitygaps
+- noborderfloatingfix
 
 ### dmenu
 
