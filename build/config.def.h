@@ -127,7 +127,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_Return,     spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_w,          spawn,          {.v = browsercmd } },
 	{ MODKEY,                       XK_e,          spawn,          {.v = emailcmd } },
-	{ MODKEY,                       XK_d,          spawn,          {.v = fmgercmd } },
+	{ MODKEY,                       XK_r,          spawn,          {.v = fmgercmd } },
 	{ MODKEY|ShiftMask,             XK_BackSpace,  killclient,     {0} },
 	{ MODKEY,                       XK_space,      spawn,          {.v = switchlang } },
 
