@@ -33,6 +33,8 @@ CONFIG=1
 UNINSTALL=0
 CLEAN=0
 
+configscripts="swaplanguage volumecontrol"
+
 # Checking arguments:
 
 for var in "$@"
@@ -120,9 +122,11 @@ if [ $UNINSTALL == 1 ]; then
 		sudo rm -f /usr/local/bin/dwm-start 1> /dev/null 2> uninstalllog.txt
 	fi
 	
-	if [ -s $HOME/.local/bin/dwm/dwm/volumecontrol ]; then
-		echo "Deleting volumecontrol script."
-		rm -f $HOME/.local/bin/dwm/dwm/volumecontrol 1> /dev/null 2> uninstalllog.txt
+	if [ -s $HOME/.config/dwm/scripts/volumecontrol ]; then
+		echo "Deleting scripts in config folder."
+		for script in $configscripts; do
+			rm -rf $HOME/.config/dwm/scripts/$script 1> /dev/null 2> uninstalllog.txt
+		done
 	fi
 
 	if [ -s /usr/share/xsessions/dwm.desktop ]; then
@@ -215,9 +219,11 @@ fi
 echo "Copying dwm-start to /usr/local/bin"
 sudo cp scripts/dwm-start /usr/local/bin 1> /dev/null 2>dwmcopyscriptslog.txt
 
-# Copy volume control script to ~/.local/bin/dwm/dwm
-echo "Copying volumecontrol to ~/.local/bin/dwm/dwm"
-cp scripts/volumecontrol "$HOME"/.local/bin/dwm/dwm/volumecontrol 1> /dev/null 2>dwmcopyscriptslog.txt
+# Copy scripts to .config/dwm
+echo "Copying config scripts"
+for script in $configscripts; do
+	cp scripts/$script "$HOME"/.config/dwm/scripts/$script 1> /dev/null 2>dwmcopyscriptslog.txt
+done
 
 # Copy dwm.desktop to /usr/share/xsessions
 echo "Copying dwm.desktop to /usr/share/xsessions/dwm.desktop"

@@ -7,7 +7,7 @@
 /* My dwm configuration file.                             */
 
 /* Header definitions ------------------------------------*/
-#define VOLCNTRLPATH "/home/dimgerasimou/.local/bin/dwm/dwm/volumecontrol"
+#define CONFIGPATH(script) "/home/dimgerasimou/.config/dwm/scripts/" #script
 
 /* Appearance --------------------------------------------*/
 
@@ -105,14 +105,17 @@ static const char *emailcmd[]   = { "thunderbird", NULL };
 static const char *fmgercmd[]   = { "dolphin", NULL };
 
 /* Volume control */
-static const char *volumeup[]   = { VOLCNTRLPATH, "--volume",     "--raise", NULL };
-static const char *volumedown[] = { VOLCNTRLPATH, "--volume",     "--lower", NULL };
-static const char *volumemute[] = { VOLCNTRLPATH, "--volume",     "--mute",  NULL };
-static const char *micmute[]    = { VOLCNTRLPATH, "--microphone", "--mute",  NULL };
+static const char *volumeup[]   = { CONFIGPATH(volumecontrol), "--volume",     "--raise", NULL };
+static const char *volumedown[] = { CONFIGPATH(volumecontrol), "--volume",     "--lower", NULL };
+static const char *volumemute[] = { CONFIGPATH(volumecontrol), "--volume",     "--mute",  NULL };
+static const char *micmute[]    = { CONFIGPATH(volumecontrol), "--microphone", "--mute",  NULL };
 
 /* Brightness control */
-static const char *brightup[]   = { "/usr/bin/brightnessctl", "--class=backlight", "set", "+5%", NULL };
-static const char *brightdown[] = { "/usr/bin/brightnessctl", "--class=backlight", "set", "5%-", NULL };
+static const char *brightup[]   = { "brightnessctl", "--class=backlight", "set", "+5%", NULL };
+static const char *brightdown[] = { "brightnessctl", "--class=backlight", "set", "5%-", NULL };
+
+/* Keyboard language */
+static const char *switchlang[] = { CONFIGPATH(swaplanguage), NULL };
 
 /* Keybinds ----------------------------------------------*/
 
@@ -126,6 +129,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_e,          spawn,          {.v = emailcmd } },
 	{ MODKEY,                       XK_d,          spawn,          {.v = fmgercmd } },
 	{ MODKEY|ShiftMask,             XK_BackSpace,  killclient,     {0} },
+	{ MODKEY,                       XK_space,      spawn,          {.v = switchlang } },
 
 
 	{ MODKEY,                       XK_b,          togglebar,      {0} },
@@ -144,7 +148,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_t,          setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,          setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,          setlayout,      {.v = &layouts[2]} },
-	{ MODKEY,                       XK_space,      setlayout,      {0} },
+	{ MODKEY|ControlMask,           XK_space,      setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,      togglefloating, {0} },
 	{ MODKEY,                       XK_0,          view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,          tag,            {.ui = ~0 } },
