@@ -17,6 +17,7 @@ Packages:
 - feh
 - picom
 - libxft-bgra (for emoji support)
+- ttf-joypixels
 - qt5ct (for qt5 application theme support)
 ## Installation
 
