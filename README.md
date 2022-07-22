@@ -37,6 +37,7 @@ Patches installed:
 - restartsig
 - vanitygaps
 - noborderfloatingfix
+- rotatestack
 
 ### dmenu
 
