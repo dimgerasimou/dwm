@@ -27,7 +27,7 @@ static const int showbar            = 1;                        /* 0 means no ba
 static const int topbar             = 1;                        /* 0 means bottom bar */
 
 /* fonts */
-static const char *fonts[]          = { "monospace:size=10", "JoyPixels:size=10:antialias=true:autohint=true", "FiraCode Nerd Font:size=10" };
+static const char *fonts[]          = { "monospace:size=10", "FiraCode Nerd Font:size=10", "JoyPixels:size=10:antialias=true:autohint=true" };
 static const char dmenufont[]       = "monospace:size=10";
 
 /* colors */
