@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 #  ____   ____
 # |  _ \ / ___|    Dimitris Gerasimou (dimgerasimou)
 # | | | | |  _     <https://github.com/dimgerasimou>
@@ -19,11 +19,11 @@ function printhelp {
 	echo "On Arch Linux if sudo prompts right password as wrong, check if"
 	echo "systemd-homed service is running."
 	echo ""
-	echo "    --help          prints this menu then exits."
-	echo "    --no-build      does not build dwm."
-	echo "    --delete-config deletes config.h before building."
-	echo "    --clean         cleans the directory from extra files then exits."
-	echo "    --uninstall     uninstalls dwm binary and all scripts."
+	echo "	--help              Prints this menu then exits."
+	echo "	--no-build          Does not build dwm."
+	echo "	--delete-config     Deletes config.h before building."
+	echo "	--clean             Cleans the directory from extra files then exits."
+	echo "	--uninstall         Uninstalls dwm binary and all scripts."
 }
 
 # Script--------------------------------------------------------------
@@ -34,7 +34,7 @@ UNINSTALL=0
 CLEAN=0
 
 configscripts="swaplanguage volumecontrol"
-
+configDir="$HOME/.local/bin"
 # Checking arguments:
 
 for var in "$@"
@@ -125,7 +125,7 @@ if [ $UNINSTALL == 1 ]; then
 	if [ -s $HOME/.config/dwm/scripts/volumecontrol ]; then
 		echo "Deleting scripts in config folder."
 		for script in $configscripts; do
-			rm -rf $HOME/.config/dwm/scripts/$script 1> /dev/null 2> uninstalllog.txt
+			rm -rf $configDir/$script 1> /dev/null 2> uninstalllog.txt
 		done
 	fi
 
@@ -143,6 +143,9 @@ if [ $UNINSTALL == 1 ]; then
 	exit
 fi
 
+gr='\x1b[32m'
+red='\x1b[31m'
+nrm='\x1b[0m'
 
 # Install dwm to usr/local/bin.
 if [ $BUILD == 1 ]; then
@@ -152,31 +155,29 @@ if [ $BUILD == 1 ]; then
 	PKG4=0
 	pckglist="feh pamixer brightnessctl picom"
 	if [[ -s /usr/bin/pacman ]]; then
-		gr='\e[32m'
-		nr='\e[39m'
 		if $(pacman -Qi feh &>/dev/null); then
 			PKG1=1
-			echo "    [ ✓ ] feh is installed."
+			echo -e "	[$gr ✓ $nrm] feh is installed."
 		else
-			echo "    [ ❌] feh is not installed."
+			echo -e "	[$red ❌$nrm] feh is not installed."
 		fi
 		if $(pacman -Qi pamixer &> /dev/null); then
 			PKG2=1
-			echo "    [ ✓ ] pamixer is installed."
+			echo -e "	[$gr ✓ $nrm] pamixer is installed."
 		else
-			echo "    [ ❌] pamixer is not installed."
+			echo -e "	[$red ❌$nrm] pamixer is not installed."
 		fi
 		if $(pacman -Qi brightnessctl &> /dev/null); then
 			PKG3=1
-			echo "    [ ✓ ] brightnessctl is installed."
+			echo -e "	[$gr ✓ $nrm] brightnessctl is installed."
 		else
-			echo "    [ ❌] brightnessctl is not installed."
+			echo -e "	[$red ❌$nrm] brightnessctl is not installed."
 		fi
 		if $(pacman -Qi picom &> /dev/null); then
 			PKG4=1
-			echo "    [ ✓ ] picom is installed."
+			echo -e "	[$gr ✓ $nrm] picom is installed."
 		else
-			echo "    [ ❌] picom is not installed."
+			echo -e "	[$red ❌$nrm] picom is not installed."
 		fi
 		if [ $PKG1 == 0 ] || [ $PKG2 == 0 ] || [ $PKG3 == 0 ] || [ $PKG4 == 0 ]; then
 			echo "Not all dependencies are installed. Install them manually."
@@ -222,7 +223,7 @@ sudo cp scripts/dwm-start /usr/local/bin 1> /dev/null 2>dwmcopyscriptslog.txt
 # Copy scripts to .config/dwm
 echo "Copying config scripts"
 for script in $configscripts; do
-	cp scripts/$script "$HOME"/.config/dwm/scripts/$script 1> /dev/null 2>dwmcopyscriptslog.txt
+	cp scripts/$script $configDir/$script 1> /dev/null 2>dwmcopyscriptslog.txt
 done
 
 # Copy dwm.desktop to /usr/share/xsessions

@@ -7,7 +7,7 @@
 /* My dwm configuration file.                             */
 
 /* Header definitions ------------------------------------*/
-#define CONFIGPATH(script) "/home/dimgerasimou/.config/dwm/scripts/" #script
+#define CONFIGPATH(script) "/home/dimgerasimou/.local/bin/" #script
 
 /* Appearance --------------------------------------------*/
 
