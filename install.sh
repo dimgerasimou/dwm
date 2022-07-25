@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 #  ____   ____
 # |  _ \ / ___|    Dimitris Gerasimou (dimgerasimou)
 # | | | | |  _     <https://github.com/dimgerasimou>
@@ -21,165 +21,63 @@ function printhelp {
 	echo ""
 	echo "	--help              Prints this menu then exits."
 	echo "	--no-build          Does not build dwm."
-	echo "	--delete-config     Deletes config.h before building."
+	echo "	--keep-config       Does not delete config.h before building."
 	echo "	--clean             Cleans the directory from extra files then exits."
 	echo "	--uninstall         Uninstalls dwm binary and all scripts."
 }
 
-# Script--------------------------------------------------------------
-
-BUILD=1
-CONFIG=1
-UNINSTALL=0
-CLEAN=0
-
-configscripts="swaplanguage volumecontrol"
-configDir="$HOME/.local/bin"
-# Checking arguments:
-
-for var in "$@"
-do
-
-	# Check for help input.
-	if [[ "$var" == "--help" || "$var" == "-h" ]]; then
-		printhelp
-		exit
-	fi
-
-	# Check for build.
-	if [[ "$var" == "--no-build" ]]; then
-		BUILD=0
-	fi
-
-	# Check for config.h deletion.
-	if [[ "$var" == "--delete-config" ]]; then
-		CONFIG=0
-	fi
-
-	# Check for clean build.
-	if [[ "$var" == "--clean" ]]; then
-		CLEAN=1
-	fi
-
-	# Check for uninstall.
-	if [[ "$var" == "--uninstall" ]]; then
-		UNINSTALL=1
-	fi
-done
-
-# Check for root privilages.
-if (( $EUID == 0 )); then
-	echo "Please do not run as root"
-		exit
-fi
-
-# Check if script is in correct directory.
-if [[ -s build/config.mk ]]; then
-	echo "In correct directory."
-else
-	echo "Script not in correct directory."
-	exit
-fi
-
-# Clean build.
-if [ $CLEAN == 1 ]; then
-	# Check that logfile does not exist.
-	if [ -s cleanlog.txt ]; then
-		rm -f cleanlog.txt
-	fi
-	
+function cleanDir {
 	echo "Cleaning build directory."
-	make --directory=build clean 1> /dev/null 2> cleanlog.txt
-	if [ -s build/config.h ]; then
-		echo "Deleting config.h."
-		rm -f build/config.h 1> /dev/null 2> cleanlog.txt
-	fi
+	make --directory=build clean 1> /dev/null 2> log.txt
+	rm -f build/config.h 1> /dev/null 2> log.txt
+}
 
-	if [ -s cleanlog.txt ]; then
-		echo "Error with clean. View cleanlog.txt for details."
-	else	
-		echo "Done!"
-		rm -f cleanlog.txt
-	fi
-	exit
-fi
-
-# Uninstallation script.
-if [ $UNINSTALL == 1 ]; then
-	# Check that logfile doesn't exist.
-	if [ -s uninstalllog.txt ]; then
-		rm -f uninstalllog.txt
-	fi
-
-	#Make uninstall script and clean.
-	echo "Uninstalling dwm binary and man."
-	sudo make --directory=build uninstall 1> /dev/null 2> uninstalllog.txt
-	"${0}" --clean
-	
-	# Removing scripts from their designated places
+function removeScripts {
 	if [ -s /usr/local/bin/dwm-start ]; then
-		echo "Deleting dwm-start script."
-		sudo rm -f /usr/local/bin/dwm-start 1> /dev/null 2> uninstalllog.txt
+		sudo rm -f /usr/local/bin/dwm-start 1> /dev/null 2> log.txt
 	fi
 	
-	if [ -s $HOME/.config/dwm/scripts/volumecontrol ]; then
-		echo "Deleting scripts in config folder."
-		for script in $configscripts; do
-			rm -rf $configDir/$script 1> /dev/null 2> uninstalllog.txt
-		done
-	fi
+	for script in $configScripts; do
+		if [[ -s $configDirectory/$script ]]; then
+			rm -rf $configDirectory/$script 1> /dev/null 2> log.txt
+		fi
+	done
 
 	if [ -s /usr/share/xsessions/dwm.desktop ]; then
-		echo "Deleting dwm-start script."
-		sudo rm -f /usr/share/xsessions/dwm.desktop 1> /dev/null 2> uninstalllog.txt
+		sudo rm -f /usr/share/xsessions/dwm.desktop 1> /dev/null 2> log.txt
 	fi
-
-	if [ -s uninstalllog.txt ]; then
-		echo "Uninstalling finished with errors. Check uninstalllog.txt."
-	else
-		echo "Done!"
-		rm -f uninstalllog.txt
+	
+	if ! [ "$(ls -A $configDirectory)" ]; then
+		rmdir $configDirectory 1> /dev/null 2> log.txt
 	fi
-	exit
-fi
+}
 
-gr='\x1b[32m'
-red='\x1b[31m'
-nrm='\x1b[0m'
+function copyScripts {
+	sudo cp scripts/dwm-start /usr/local/bin 1> /dev/null 2> log.txt
 
-# Install dwm to usr/local/bin.
-if [ $BUILD == 1 ]; then
-	PKG1=0
-	PKG2=0
-	PKG3=0
-	PKG4=0
-	pckglist="feh pamixer brightnessctl picom"
+	for script in $configScripts; do
+		cp scripts/$script $configDirectory/$script 1> /dev/null 2> log.txt
+	done
+	
+	sudo cp scripts/dwm.desktop /usr/share/xsessions/dwm.desktop 1> /dev/null 2> log.txt
+}
+
+function dependencyCheck {
+	gr='\x1b[32m'
+	red='\x1b[31m'
+	nrm='\x1b[0m'
+	validDependencies=1
 	if [[ -s /usr/bin/pacman ]]; then
-		if $(pacman -Qi feh &>/dev/null); then
-			PKG1=1
-			echo -e "	[$gr ✓ $nrm] feh is installed."
-		else
-			echo -e "	[$red ❌$nrm] feh is not installed."
-		fi
-		if $(pacman -Qi pamixer &> /dev/null); then
-			PKG2=1
-			echo -e "	[$gr ✓ $nrm] pamixer is installed."
-		else
-			echo -e "	[$red ❌$nrm] pamixer is not installed."
-		fi
-		if $(pacman -Qi brightnessctl &> /dev/null); then
-			PKG3=1
-			echo -e "	[$gr ✓ $nrm] brightnessctl is installed."
-		else
-			echo -e "	[$red ❌$nrm] brightnessctl is not installed."
-		fi
-		if $(pacman -Qi picom &> /dev/null); then
-			PKG4=1
-			echo -e "	[$gr ✓ $nrm] picom is installed."
-		else
-			echo -e "	[$red ❌$nrm] picom is not installed."
-		fi
-		if [ $PKG1 == 0 ] || [ $PKG2 == 0 ] || [ $PKG3 == 0 ] || [ $PKG4 == 0 ]; then
+		for pkg in $dependencyList; do
+			if $(pacman -Qi $pkg &> /dev/null); then
+				echo -e "	[$gr ✓ $nrm] $pkg is installed."
+			else
+				echo -e "	[$red ❌$nrm] $pkg is not installed."
+				validDependencies=0
+			fi
+		done
+
+		if [ validDependencies == 0 ]; then
 			echo "Not all dependencies are installed. Install them manually."
 			exit 1
 		fi
@@ -190,56 +88,89 @@ if [ $BUILD == 1 ]; then
 			* ) exit 1;;
 		esac
 	fi
+}
 
+function build {
+	echo "Cheking dependencies."
+	dependencyCheck
 
-	if [[ -s dwminstalllog.txt ]]; then
-		rm dwminstalllog.txt
-	fi
-
-	if [ $CONFIG == 0 ] && [ -s build/config.h ]; then
-		"${0}" --clean
+	if [ CONFIG == 0 ]; then
+		cleanDir
 	fi
 
 	echo "Building dwm."
-	sudo make --directory=build clean install 1> /dev/null 2>dwminstalllog.txt
+	sudo make --directory=build clean install 1> /dev/null 2> log.txt
+
 	
-	if [[ -s dwminstalllog.txt ]]; then
-		echo "Error with building. Check Logs at .dwminstalllog in this directory."
-	else
-	    echo "dwm built succesfully!"
-		rm dwminstalllog.txt
-	fi
-fi
+}
 
-# Remove log text file.
-if [[ -s dwmcopyscriptslog.txt ]]; then
-	rm dwmcopyscriptslog.txt
-fi
+function uninstall {
+	echo "Uninstalling dwm binary and man."
+	sudo make --directory=build uninstall 1> /dev/null 2> log.txt
+	cleanDir
+	
+	echo "Removing scripts."
+	removeScripts
+}
 
-# Copy dwm-start script to /usr/local/bin
-echo "Copying dwm-start to /usr/local/bin"
-sudo cp scripts/dwm-start /usr/local/bin 1> /dev/null 2>dwmcopyscriptslog.txt
+# Script--------------------------------------------------------------
 
-# Copy scripts to .config/dwm
-echo "Copying config scripts"
-for script in $configscripts; do
-	cp scripts/$script $configDir/$script 1> /dev/null 2>dwmcopyscriptslog.txt
+BUILD=1
+CONFIG=0
+UNINSTALL=0
+CLEAN=0
+
+configScripts="swaplanguage volumecontrol"
+configDirectory="$HOME/.local/bin"
+dependencyList="feh pamixer brightnessctl picom"
+
+# Checking arguments:
+for var in "$@"
+do
+	case $var in
+		"--help" | "-h")    printhelp
+		                    exit;;
+		"--no-build")       BUILD=0;;
+		"--keep-config")    CONFIG=1;;
+		"--clean")          CLEAN=1;;
+		"--uninstall")      UNINSTALL=1;;
+		*)					echo "Invalid arguments. --help for help"
+		                    exit 1;;
+	esac
 done
 
-# Copy dwm.desktop to /usr/share/xsessions
-echo "Copying dwm.desktop to /usr/share/xsessions/dwm.desktop"
-sudo cp scripts/dwm.desktop /usr/share/xsessions/dwm.desktop 1> /dev/null 2>dwmcopyscriptslog.txt
-
-if [[ -s dwmcopyscriptslog.txt ]]; then
-	echo "Error with copying the scripts. Check logs at dwmcopyscriptslog.txt in this directory."
-else
-	echo "Copied all scripts succesfully!"
-	rm dwmcopyscriptslog.txt
+# Check for root privilages.
+if (( $EUID == 0 )); then
+	echo "Please do not run as root"
+		exit -1pckglist="feh pamixer brightnessctl picom"
 fi
 
-if [[ -s dwmcopyscriptslog.txt ]] || [[ -s dwminstalllog.txt ]]; then
-		echo "Installation finished with errors."
+# Check if script is in correct directory.
+if ! [[ -s build/config.mk ]]; then
+	echo "Script not in correct directory."
+	exit -1
+fi
+
+# Delete existing log.
+if [[ -s log.txt ]]; then
+	rm log.txt
+fi
+
+if [ $CLEAN == 1 ]; then
+	cleanDir
+elif [ $UNINSTALL == 1 ]; then
+	uninstall
+elif [ $BUILD == 1 ]; then
+	build
+	copyScripts
+else
+	copyScripts
+fi
+
+if [[ -s log.txt ]]; then
+		echo "Finished with errors."
 		exit 1
 	else
-		echo "Installation completed!"
+		echo "Done!"
+		rm log.txt
 fi
