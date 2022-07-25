@@ -8,6 +8,12 @@
 # Script that aids with the installation of dwm. Can build dwm, and copy
 # the scripts needed for it to run at their designated directories.
 
+# Global variables ---------------------------------------------------
+
+configScripts="swaplanguage volumecontrol"
+configDirectory="$HOME/.local/bin"
+dependencyList="feh pamixer brightnessctl picom"
+
 # Functions-----------------------------------------------------------
 
 function printhelp {
@@ -119,10 +125,6 @@ BUILD=1
 CONFIG=0
 UNINSTALL=0
 CLEAN=0
-
-configScripts="swaplanguage volumecontrol"
-configDirectory="$HOME/.local/bin"
-dependencyList="feh pamixer brightnessctl picom"
 
 # Checking arguments:
 for var in "$@"
