@@ -29,6 +29,7 @@ function printhelp {
 	echo "	--no-build          Does not build dwm."
 	echo "	--keep-config       Does not delete config.h before building."
 	echo "	--clean             Cleans the directory from extra files then exits."
+	echo "  --install-clean     Installs dwm then cleans the directory."
 	echo "	--uninstall         Uninstalls dwm binary and all scripts."
 }
 
@@ -39,6 +40,7 @@ function cleanDir {
 }
 
 function removeScripts {
+	echo "Removing scripts."
 	if [ -s /usr/local/bin/dwm-start ]; then
 		sudo rm -f /usr/local/bin/dwm-start 1> /dev/null 2> log.txt
 	fi
@@ -59,6 +61,7 @@ function removeScripts {
 }
 
 function copyScripts {
+	echo "Copying scripts."
 	sudo cp scripts/dwm-start /usr/local/bin 1> /dev/null 2> log.txt
 
 	for script in $configScripts; do
@@ -69,6 +72,7 @@ function copyScripts {
 }
 
 function dependencyCheck {
+	echo "Checking dependencies."
 	gr='\x1b[32m'
 	red='\x1b[31m'
 	nrm='\x1b[0m'
@@ -97,7 +101,6 @@ function dependencyCheck {
 }
 
 function build {
-	echo "Cheking dependencies."
 	dependencyCheck
 
 	if [ CONFIG == 0 ]; then
@@ -111,11 +114,10 @@ function build {
 }
 
 function uninstall {
-	echo "Uninstalling dwm binary and man."
+	echo "Uninstalling dwm."
 	sudo make --directory=build uninstall 1> /dev/null 2> log.txt
 	cleanDir
-	
-	echo "Removing scripts."
+
 	removeScripts
 }
 
@@ -125,6 +127,7 @@ BUILD=1
 CONFIG=0
 UNINSTALL=0
 CLEAN=0
+INSTALL=0
 
 # Checking arguments:
 for var in "$@"
@@ -136,21 +139,27 @@ do
 		"--keep-config")    CONFIG=1;;
 		"--clean")          CLEAN=1;;
 		"--uninstall")      UNINSTALL=1;;
+		"--install-clean")  CLEAN=1
+		                    INSTALL=1;;
 		*)					echo "Invalid arguments. --help for help"
 		                    exit 1;;
 	esac
 done
 
+if [ $UNINSTALL == 0 ] && [ $CLEAN == 0 ]; then
+	INSTALL=1
+fi
+
 # Check for root privilages.
 if (( $EUID == 0 )); then
 	echo "Please do not run as root"
-		exit -1pckglist="feh pamixer brightnessctl picom"
+		exit 1
 fi
 
 # Check if script is in correct directory.
 if ! [[ -s build/config.mk ]]; then
 	echo "Script not in correct directory."
-	exit -1
+	exit 1
 fi
 
 # Delete existing log.
@@ -158,21 +167,28 @@ if [[ -s log.txt ]]; then
 	rm log.txt
 fi
 
+
+if [ $UNINSTALL == 1 ]; then
+	uninstall
+fi
+
+if [ $INSTALL == 1 ]; then
+	if [ $BUILD == 1 ]; then
+		build
+	fi
+	copyScripts
+fi
+
 if [ $CLEAN == 1 ]; then
 	cleanDir
-elif [ $UNINSTALL == 1 ]; then
-	uninstall
-elif [ $BUILD == 1 ]; then
-	build
-	copyScripts
-else
-	copyScripts
 fi
 
 if [[ -s log.txt ]]; then
 		echo "Finished with errors."
 		exit 1
 	else
+		if [ -e log.txt ]; then
+			rm log.txt
+		fi
 		echo "Done!"
-		rm log.txt
 fi
