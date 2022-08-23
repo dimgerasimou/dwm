@@ -27,7 +27,6 @@ function printhelp {
 	echo ""
 	echo "	--help              Prints this menu then exits."
 	echo "	--no-build          Does not build dwm."
-	echo "	--keep-config       Does not delete config.h before building."
 	echo "	--clean             Cleans the directory from extra files then exits."
 	echo "  --install-clean     Installs dwm then cleans the directory."
 	echo "	--uninstall         Uninstalls dwm binary and all scripts."
@@ -36,7 +35,6 @@ function printhelp {
 function cleanDir {
 	echo "Cleaning build directory."
 	make --directory=build clean 1> /dev/null 2> log.txt
-	rm -f build/config.h 1> /dev/null 2> log.txt
 }
 
 function removeScripts {

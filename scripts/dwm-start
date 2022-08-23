@@ -17,5 +17,8 @@ feh --bg-fill $HOME/Pictures/Wallpapers/star_destroyer.jpg
 # Start picom
 /usr/bin/picom &
 
+# Start dunst
+/usr/bin/dunst &
+
 # Start dwm
 /usr/local/bin/dwm

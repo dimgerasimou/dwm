@@ -19,6 +19,8 @@ Packages:
 - libxft-bgra (for emoji support)
 - ttf-joypixels
 - qt5ct (for qt5 application theme support)
+- dunst (for notification support)
+
 ## Installation
 
 Edit config.mk to match your local setup (dwm is installed into the /usr/local namespace by default).
@@ -39,6 +41,7 @@ Patches installed:
 - vanitygaps
 - noborderfloatingfix
 - rotatestack
+- statuscmd
 
 ### dmenu
 
