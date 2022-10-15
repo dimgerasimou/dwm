@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# Custom dwm startup script.
+#
+# Author: Dimitris Gerasimou <https://github.com/dimgerasimou>
+#
+
+# Set Wallpaper
+feh --bg-fill $HOME/Pictures/purple_sky.jpg
+
+# Start dwm
+/usr/local/bin/dwm
