@@ -59,9 +59,12 @@ function removeScripts {
 }
 
 function copyScripts {
-	mkdir $configDirectory
 	echo "Copying scripts."
 	sudo cp scripts/dwm-start /usr/local/bin 1> /dev/null 2> log.txt
+
+	if [[ ! -d $configDirectory ]]; then
+		mkdir $configDirectory 1> /dev/null 2> log.txt
+	fi
 
 	for script in $configScripts; do
 		cp scripts/$script $configDirectory/$script 1> /dev/null 2> log.txt
