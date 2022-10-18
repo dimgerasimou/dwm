@@ -10,9 +10,9 @@
 
 # Global variables ---------------------------------------------------
 
-configScripts=""
-configDirectory="$HOME/.local/bin"
-dependencyList="feh"
+configScripts="volumecontrol swaplanguage"
+configDirectory="$HOME/.local/bin/dwm"
+dependencyList="feh brightnessctl pamixer"
 
 # Functions-----------------------------------------------------------
 
@@ -59,6 +59,7 @@ function removeScripts {
 }
 
 function copyScripts {
+	mkdir $configDirectory
 	echo "Copying scripts."
 	sudo cp scripts/dwm-start /usr/local/bin 1> /dev/null 2> log.txt
 

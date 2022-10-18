@@ -1,5 +1,7 @@
 /* See LICENSE file for copyright and license details. */
 
+#define CONFIGPATH(script) "/home/dimgerasimou/.local/bin/dwm/" #script
+
 /* appearance */
 static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
@@ -64,6 +66,19 @@ static const char *browsercmd[] = { "firefox", NULL };
 static const char *emailcmd[]   = { "thunderbird", NULL };
 static const char *explrcmd[]   = { "dolphin", NULL };
 
+/* Volume control */
+static const char *volumeup[]   = { CONFIGPATH(volumecontrol), "--volume",     "--raise", NULL };
+static const char *volumedown[] = { CONFIGPATH(volumecontrol), "--volume",     "--lower", NULL };
+static const char *volumemute[] = { CONFIGPATH(volumecontrol), "--volume",     "--mute",  NULL };
+//static const char *micmute[]    = { CONFIGPATH(mutemic),  NULL };
+
+/* Brightness control */
+static const char *brightup[]   = { "brightnessctl", "--class=backlight", "set", "+5%", NULL };
+static const char *brightdown[] = { "brightnessctl", "--class=backlight", "set", "5%-", NULL };
+
+/* Keyboard language */
+static const char *switchlang[] = { CONFIGPATH(swaplanguage), NULL };
+
 /* keys */
 static const Key keys[] = {
 	/* modifier                     key           function        argument */
@@ -73,6 +88,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_w,         spawn,          {.v = browsercmd } },
 	{ MODKEY,                       XK_e,         spawn,          {.v = emailcmd } },
 	{ MODKEY,                       XK_d,         spawn,          {.v = explrcmd } },
+	{ MODKEY,                       XK_space,     spawn,          {.v = switchlang } },
 
 	{ MODKEY,                       XK_b,         togglebar,      {0} },
 	{ MODKEY,                       XK_j,         focusstack,     {.i = +1 } },
@@ -87,7 +103,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_t,         setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,         setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,         setlayout,      {.v = &layouts[2]} },
-	{ MODKEY,                       XK_space,     setlayout,      {0} },
+	{ MODKEY|ControlMask,           XK_space,     setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,     togglefloating, {0} },
 	{ MODKEY,                       XK_0,         view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,         tag,            {.ui = ~0 } },
@@ -95,6 +111,18 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_period,    focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,     tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period,    tagmon,         {.i = +1 } },
+
+	/* function keys */
+	{ 0,                            XF86XK_AudioRaiseVolume, spawn, {.v = volumeup } },
+	{ 0,                            XF86XK_AudioLowerVolume, spawn, {.v = volumedown } },
+	{ 0,                            XF86XK_AudioMute,        spawn, {.v = volumemute } },
+	//{ 0,                            XF86XK_AudioMicMute,     spawn, {.v = micmute } },
+	//{ MODKEY,                       XK_F5,                   spawn, {.v = micmute } },
+
+	{ 0,                            XF86XK_MonBrightnessUp,  spawn, {.v = brightup } },
+	{ 0,                            XF86XK_MonBrightnessDown,spawn, {.v = brightdown } },
+
+
 	TAGKEYS(                        XK_1,                         0)
 	TAGKEYS(                        XK_2,                         1)
 	TAGKEYS(                        XK_3,                         2)
