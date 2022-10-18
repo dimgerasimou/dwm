@@ -28,7 +28,7 @@ function printhelp {
 	echo "	--help              Prints this menu then exits."
 	echo "	--no-build          Does not build dwm."
 	echo "	--clean             Cleans the directory from extra files then exits."
-	echo "  --install-clean     Installs dwm then cleans the directory."
+	echo "	--install-clean     Installs dwm then cleans the directory."
 	echo "	--uninstall         Uninstalls dwm binary and all scripts."
 }
 
