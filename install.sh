@@ -12,7 +12,7 @@
 
 configScripts="volumecontrol swaplanguage"
 configDirectory="$HOME/.local/bin/dwm"
-dependencyList="feh brightnessctl pamixer"
+dependencyList="feh brightnessctl pamixer ttf-joypixels"
 
 # Functions-----------------------------------------------------------
 

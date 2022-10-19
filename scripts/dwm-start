@@ -8,5 +8,8 @@
 # Set Wallpaper
 feh --bg-fill $HOME/Pictures/purple_sky.jpg
 
+# Start dwmblocks
+/usr/local/bin/dwmblocks &
+
 # Start dwm
 /usr/local/bin/dwm
