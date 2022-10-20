@@ -72,7 +72,7 @@ static const char *explrcmd[]   = { "dolphin", NULL };
 static const char *volumeup[]   = { CONFIGPATH(volumecontrol), "--volume",     "--raise", NULL };
 static const char *volumedown[] = { CONFIGPATH(volumecontrol), "--volume",     "--lower", NULL };
 static const char *volumemute[] = { CONFIGPATH(volumecontrol), "--volume",     "--mute",  NULL };
-//static const char *micmute[]    = { CONFIGPATH(mutemic),  NULL };
+static const char *micmute[]    = { CONFIGPATH(mutemic),  NULL };
 
 /* Brightness control */
 static const char *brightup[]   = { "brightnessctl", "--class=backlight", "set", "+5%", NULL };
@@ -118,8 +118,8 @@ static const Key keys[] = {
 	{ 0,                            XF86XK_AudioRaiseVolume, spawn, {.v = volumeup } },
 	{ 0,                            XF86XK_AudioLowerVolume, spawn, {.v = volumedown } },
 	{ 0,                            XF86XK_AudioMute,        spawn, {.v = volumemute } },
-	//{ 0,                            XF86XK_AudioMicMute,     spawn, {.v = micmute } },
-	//{ MODKEY,                       XK_F5,                   spawn, {.v = micmute } },
+	{ 0,                            XF86XK_AudioMicMute,     spawn, {.v = micmute } },
+	{ MODKEY,                       XK_F5,                   spawn, {.v = micmute } },
 
 	{ 0,                            XF86XK_MonBrightnessUp,  spawn, {.v = brightup } },
 	{ 0,                            XF86XK_MonBrightnessDown,spawn, {.v = brightdown } },

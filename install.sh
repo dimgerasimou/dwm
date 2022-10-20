@@ -11,6 +11,7 @@
 # Global variables ---------------------------------------------------
 
 configScripts="volumecontrol swaplanguage"
+compiledScripts="mutemic"
 configDirectory="$HOME/.local/bin/dwm"
 dependencyList="feh brightnessctl pamixer ttf-joypixels"
 
@@ -49,6 +50,13 @@ function removeScripts {
 		fi
 	done
 
+	for script in $compiledScripts; do
+		if [[ -s $configDirectory/$script ]]; then
+			rm -rf $configDirectory/$script 1> /dev/null 2> log.txt
+		fi
+	done
+
+
 	if [ -s /usr/share/xsessions/dwm.desktop ]; then
 		sudo rm -f /usr/share/xsessions/dwm.desktop 1> /dev/null 2> log.txt
 	fi
@@ -68,6 +76,11 @@ function copyScripts {
 
 	for script in $configScripts; do
 		cp scripts/$script $configDirectory/$script 1> /dev/null 2> log.txt
+	done
+
+	for script in $compiledScripts; do
+		gcc -o scripts/$script scripts/src/$script.c 1> /dev/null 2> log.txt
+		mv scripts/$script $configDirectory/$script 1> /dev/null 2> log.txt
 	done
 	
 	sudo cp scripts/dwm.desktop /usr/share/xsessions/dwm.desktop 1> /dev/null 2> log.txt
@@ -89,7 +102,7 @@ function dependencyCheck {
 			fi
 		done
 
-		if [ validDependencies == 0 ]; then
+		if [ $validDependencies == 0 ]; then
 			echo "Not all dependencies are installed. Install them manually."
 			exit 1
 		fi
