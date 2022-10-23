@@ -1,51 +1,33 @@
 # dwm - dynamic window manager
 
 dwm is an extremely fast, small, and dynamic window manager for X.
-
+This is a heavily patched version with all the scripts i use for my configuration in daily use.
 
 ## Requirements
 
 In order to build dwm you need the Xlib header files.
-feh brightnessctl pamixer packages
+This patched version as is, requires the following packages:
+- feh
+- brightnessctl
+- pamixer
+- ttf-joypixels
 
 ## Installation
 
-Edit config.mk to match your local setup (dwm is installed into
-the /usr/local namespace by default).
-
-Afterwards enter the following command to build and install dwm (if
-necessary as root):
-
-    make clean install
+This build can be installed normally as stock dwm, however there is an install script that helps with all the scripts installation and configuration of this build (use --help option).
 
 ## Patches
+
 - swallow
 - restartsig
 
 ## Running dwm
 
-Add the following line to your .xinitrc to start dwm using startx:
+By using the install script running dwm can be done automaticly through the login manager.
+If not using one, it can be executed by adding `exec dwm` in the .xinitrc file.
 
-    exec dwm
-
-In order to connect dwm to a specific display, make sure that
-the DISPLAY environment variable is set correctly, e.g.:
-
-    DISPLAY=foo.bar:1 exec dwm
-
-(This will start dwm on display :1 of the host foo.bar.)
-
-In order to display status info in the bar, you can do something
-like this in your .xinitrc:
-
-    while xsetroot -name "`date` `uptime | sed 's/.*,//'`"
-    do
-    	sleep 1
-    done &
-    exec dwm
-
+For a statusbar any can be installed but you can use [my version](https://github.com/dimgerasimou/dwm-asyncblocks 'dwm-asyncblocks') of dwmblocks.
 
 ## Configuration
 
-The configuration of dwm is done by creating a custom config.h
-and (re)compiling the source code.
+The configuration of dwm is done by creating a custom config.h and (re)compiling the source code.
