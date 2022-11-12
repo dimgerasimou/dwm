@@ -13,7 +13,7 @@
 configScripts="volumecontrol swaplanguage"
 compiledScripts="mutemic"
 configDirectory="$HOME/.local/bin/dwm"
-dependencyList="feh brightnessctl pamixer ttf-joypixels"
+dependencyList="feh brightnessctl pamixer ttf-joypixels easyeffects"
 
 # Functions-----------------------------------------------------------
 

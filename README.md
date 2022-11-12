@@ -11,6 +11,7 @@ This patched version as is, requires the following packages:
 - brightnessctl
 - pamixer
 - ttf-joypixels
+- easyeffects
 
 ## Installation
 
