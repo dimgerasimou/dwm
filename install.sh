@@ -13,7 +13,8 @@
 configScripts="volumecontrol swaplanguage"
 compiledScripts="mutemic"
 configDirectory="$HOME/.local/bin/dwm"
-dependencyList="feh brightnessctl pamixer ttf-joypixels easyeffects"
+dependencyList="feh brightnessctl pamixer ttf-joypixels easyeffects picom"
+
 
 # Functions-----------------------------------------------------------
 
@@ -97,8 +98,12 @@ function dependencyCheck {
 			if $(pacman -Qi $pkg &> /dev/null); then
 				echo -e "	[$gr ✓ $nrm] $pkg is installed."
 			else
-				echo -e "	[$red ❌$nrm] $pkg is not installed."
-				validDependencies=0
+				if [ -s /usr/local/bin/$pkg ]; then
+					echo -e "	[$gr ✓ $nrm] $pkg is installed."
+				else
+					echo -e "	[$red ❌$nrm] $pkg is not installed."
+					validDependencies=0
+				fi
 			fi
 		done
 

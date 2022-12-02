@@ -5,17 +5,20 @@
 # Author: Dimitris Gerasimou <https://github.com/dimgerasimou>
 #
 
-# Set Wallpaper
-feh --bg-fill $HOME/Pictures/purple_sky.jpg
+# Start picom
+/usr/bin/picom -b
 
 # Start dwmblocks
 /usr/local/bin/dwmblocks &
 
 # Multi monitor setup
-(sleep 1 && (xrandr --output HDMI-0 --auto --right-of eDP-1-1)) &
+(sleep 0.2 && (xrandr --output HDMI-0 --auto --right-of eDP-1-1)) &
 
 # Start easyeffects for equalizer
-(sleep 1 && (nohup easyeffects --gapplication-service &)) &
+(sleep 0.2 && (nohup easyeffects --gapplication-service &)) &
+
+# Set Wallpaper
+(sleep 0.2 && (feh --bg-fill $HOME/Pictures/purple_sky.jpg)) &
 
 # Start dwm
 /usr/local/bin/dwm

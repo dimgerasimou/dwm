@@ -12,6 +12,7 @@ This patched version as is, requires the following packages:
 - pamixer
 - ttf-joypixels
 - easyeffects
+- picom
 
 ## Installation
 
