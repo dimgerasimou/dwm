@@ -47,6 +47,7 @@ static const Rule rules[] = {
 	{ "firefox",     NULL,       NULL,           0,            0,            0,            -1,          -1 },
 	{ "thunderbird", NULL,       NULL,           1 << 8,       0,            0,            -1,          -1 },
 	{ "alacritty",   NULL,       NULL,           0,            0,            1,            0,           -1 },
+	{ "st",          NULL,       NULL,           0,            0,            1,            0,           -1 },
 	{ "vscodium",    NULL,       NULL,           0,            0,            0,            0,           -1 },
 	{ NULL,          NULL,       "Event Tester", 0,            0,            0,            1,           -1 }, /* xev */
 };
@@ -54,7 +55,7 @@ static const Rule rules[] = {
 /* layout(s) */
 static float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
 static int nmaster     = 1;    /* number of clients in master area */
-static int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
+static int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
 static const int decorhints  = 1;    /* 1 means respect decoration hints */
 static const int attachdirection = 2;/* 0 default, 1 above, 2 aside, 3 below, 4 bottom, 5 top */
 static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
@@ -94,7 +95,7 @@ static const Layout layouts[] = {
 
 /* commands */
 static const char *dmenucmd[]   = { "dmenu_run", "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbordercolor, "-sf", selfgcolor, NULL };
-static const char *termcmd[]    = { "alacritty", NULL };
+static const char *termcmd[]    = { "st", NULL };
 static const char *browsercmd[] = { "firefox", NULL };
 static const char *emailcmd[]   = { "thunderbird", NULL };
 static const char *explrcmd[]   = { "dolphin", NULL };
