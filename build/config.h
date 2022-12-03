@@ -1,6 +1,7 @@
 /* See LICENSE file for copyright and license details. */
 
 #define CONFIGPATH(script) "/home/dimgerasimou/.local/bin/dwm/" #script
+#define SESSION_FILE "/tmp/dwm-session"
 
 /* appearance */
 static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */

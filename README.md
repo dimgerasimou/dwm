@@ -31,7 +31,7 @@ This build can be installed normally as stock dwm, however there is an install s
 - rotatestack
 - vanitygaps
 - hidevacanttabs
-
+- restoreafterrestart
 ## Running dwm
 
 By using the install script running dwm can be done automaticly through the login manager.
