@@ -26,6 +26,8 @@ This build can be installed normally as stock dwm, however there is an install s
 - xresources
 - status2d
 - systray
+- decorhints
+
 ## Running dwm
 
 By using the install script running dwm can be done automaticly through the login manager.
