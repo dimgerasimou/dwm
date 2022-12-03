@@ -28,6 +28,7 @@ This build can be installed normally as stock dwm, however there is an install s
 - systray
 - decorhints
 - noborderselflickerfix
+- rotatestack
 
 ## Running dwm
 
