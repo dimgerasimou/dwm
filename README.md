@@ -27,6 +27,7 @@ This build can be installed normally as stock dwm, however there is an install s
 - status2d
 - systray
 - decorhints
+- noborderselflickerfix
 
 ## Running dwm
 
