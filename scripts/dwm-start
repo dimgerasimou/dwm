@@ -18,7 +18,7 @@
 (sleep 0.2 && (nohup easyeffects --gapplication-service &)) &
 
 # Set Wallpaper
-(sleep 0.2 && (feh --bg-fill $HOME/Pictures/purple_sky.jpg)) &
+(sleep 0.2 && (feh --bg-fill $HOME/Pictures/Background.png)) &
 
 # Start dwm
 /usr/local/bin/dwm
