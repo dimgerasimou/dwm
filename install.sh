@@ -10,10 +10,10 @@
 
 # Global variables ---------------------------------------------------
 
-configScripts="volumecontrol swaplanguage"
-compiledScripts="mutemic"
+configScripts="swaplanguage"
+compiledScripts="audiocontrol"
 configDirectory="$HOME/.local/bin/dwm"
-dependencyList="feh brightnessctl pamixer ttf-joypixels easyeffects picom"
+dependencyList="feh brightnessctl wireplumber ttf-joypixels easyeffects picom"
 
 
 # Functions-----------------------------------------------------------
