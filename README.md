@@ -9,7 +9,7 @@ In order to build dwm you need the Xlib header files.
 This patched version as is, requires the following packages:
 - feh
 - brightnessctl
-- pamixer
+- wireplumber
 - ttf-joypixels
 - easyeffects
 - picom
@@ -32,6 +32,7 @@ This build can be installed normally as stock dwm, however there is an install s
 - vanitygaps
 - hidevacanttabs
 - restoreafterrestart
+
 ## Running dwm
 
 By using the install script running dwm can be done automaticly through the login manager.
