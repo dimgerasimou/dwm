@@ -3,8 +3,7 @@
  * of wireplumber and then signal dwmblocks to update the corresponding block.
  */
 
-#define VOLSIGNO 10
-#define MICSIGNO 11
+#define SIGNALNO 10
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -52,10 +51,8 @@ int main(int argc, char *argv[]) {
 
 	if (strcmp(argv[1], "source") == 0) {
 		strcat(output, "@DEFAULT_AUDIO_SOURCE@ ");
-		signo = MICSIGNO;
 	} else if (strcmp(argv[1], "sink") == 0) {
 		strcat(output, "@DEFAULT_AUDIO_SINK@ ");
-		signo = VOLSIGNO;
 	} else {
 		perror("dwm-audiocontrol: Wrong argument format: Wrong device type");
 		exit(EXIT_FAILURE);
@@ -70,10 +67,6 @@ int main(int argc, char *argv[]) {
 
 	FILE* fp;
 	fp = popen(output, "r");
-	if (fp == NULL) {
-		perror("dwm-audiocontrol: Failed to execute wpctl command.");
-		exit(EXIT_FAILURE);
-	}
 	pclose(fp);
 	struct dirent** pidlist;
 
@@ -107,7 +100,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	kill(pid, SIGRTMIN + signo);
+	kill(pid, SIGRTMIN + SIGNALNO);
 	freestruct(pidlist, funcret);
 	return 0;
 }

@@ -125,7 +125,7 @@ ResourcePref resources[] = {
 static const char *volumeup[]   = { CONFIGPATH(audiocontrol), "sink",     "increase",    NULL };
 static const char *volumedown[] = { CONFIGPATH(audiocontrol), "sink",     "decrease",    NULL };
 static const char *volumemute[] = { CONFIGPATH(audiocontrol), "sink",     "toggle-mute", NULL };
-static const char *micmute[]    = { CONFIGPATH(audiocontrol), "source",   "toggle-mute"  NULL };
+static const char *micmute[]    = { CONFIGPATH(audiocontrol), "source",   "toggle-mute", NULL };
 
 /* Brightness control */
 static const char *brightup[]   = { "brightnessctl", "--class=backlight", "set", "+5%", NULL };
