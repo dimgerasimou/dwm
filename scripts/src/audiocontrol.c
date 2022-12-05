@@ -4,6 +4,7 @@
  */
 
 #define SIGNALNO 10
+#define MAXVOL "1.2"
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -57,9 +58,9 @@ int main(int argc, char *argv[]) {
 		perror("dwm-audiocontrol: Wrong argument format: Wrong device type");
 		exit(EXIT_FAILURE);
 	}
-
+ 
 	if (strcmp(argv[2], "increase") == 0)	
-		strcat(output, "5%+");
+		strcat(output, "5%+ -l "MAXVOL);
 	else if (strcmp(argv[2], "decrease") == 0)
 		strcat(output, "5%-");
 	else
