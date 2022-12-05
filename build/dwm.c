@@ -971,7 +971,7 @@ drawstatusbar(Monitor *m, int bh, char* stext) {
 		isCode = 0;
 	text = p;
 
-	w += 2; /* 1px padding on both sides */
+	w += 0; /* 1px padding on both sides */
 	ret = m->ww - w;
 	x = m->ww - w - getsystraywidth();
 
@@ -1061,7 +1061,7 @@ drawbar(Monitor *m)
 
 	/* draw status first so it can be overdrawn by tags later */
 	if (m == selmon) { /* status is only drawn on selected monitor */
-		tw = m->ww - drawstatusbar(m, bh, stext);
+		tw = m->ww - drawstatusbar(m, bh, stext) - stw;
 	}
 
 	resizebarwin(m);
