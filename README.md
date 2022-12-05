@@ -32,6 +32,7 @@ This build can be installed normally as stock dwm, however there is an install s
 - vanitygaps
 - hidevacanttabs
 - restoreafterrestart
+- focusonclick
 
 ## Running dwm
 
