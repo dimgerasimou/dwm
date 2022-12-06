@@ -3,15 +3,15 @@
  * of wireplumber and then signal dwmblocks to update the corresponding block.
  */
 
-#define SIGNALNO 10
-#define MAXVOL "1.2"
-
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <dirent.h>
 #include <signal.h>
+
+#define SIGNALNO 10    /* signal number of dwmblocks volume block */
+#define MAXVOL "1.2"   /* max volume to raise the sink 1.2 = 120% */
 
 void freestruct(struct dirent** input, int n) {
 	while (n--)
