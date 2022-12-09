@@ -14,7 +14,7 @@ configScripts="swaplanguage"
 compiledScripts="audiocontrol"
 SCRIPTDIR="$HOME/.local/bin/dwm"
 SRC="src"
-SCRIPTSRC="sripts"
+SCRIPTSRC="scripts"
 
 # Functions-----------------------------------------------------------
 
