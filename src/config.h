@@ -15,6 +15,7 @@ static const int showsystray             = 1;   /* 0 means no systray */
 static int showbar                       = 1;   /* 0 means no bar */
 static int topbar                        = 1;   /* 0 means bottom bar */
 static const unsigned int statusbarlhpad = 0;   /* left horizontal padding of status bar */
+static const unsigned int showstatusallmon = 1; /* 1 means show statusbar on all monitors */
 static const unsigned int hidevacanttags = 1;   /* 0 means show all tags */
 static const int focusonwheel       = 0;
 static const unsigned int gappih    = 20;       /* horiz inner gap between windows */
