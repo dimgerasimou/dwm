@@ -16,6 +16,9 @@ static int topbar                          = 1;    /* 0: bottom bar */
 static const unsigned int statusbarlhpad   = 0;    /* right horizontal padding of status bar */
 static const unsigned int showstatusallmon = 1;    /* 1: show statusbar on all monitors */
 static const unsigned int hidevacanttags   = 1;    /* 1: hide vacant tags */
+static const int vertpad                   = 10;   /* vertical padding above the bar */
+static const int sidepad                   = 10;   /* horizontal padding of the bar  */
+static const int underpad                  = 12;   /* vertical padding below the bar */
 
 /* windows */
 static const int swallowfloating    = 0;     /* 1: swallow floating windows by default */
@@ -39,11 +42,6 @@ static char normfgcolor[]           = "#bbbbbb";
 static char selfgcolor[]            = "#eeeeee";
 static char selbordercolor[]        = "#296991";
 static char selbgcolor[]            = "#296991";
-static char *colors[][3] = {
-       /*               fg           bg           border   */
-       [SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
-       [SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
-};
 
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
@@ -110,6 +108,12 @@ ResourcePref resources[] = {
 		{ "nmaster",          	INTEGER, &nmaster },
 		{ "resizehints",       	INTEGER, &resizehints },
 		{ "mfact",      	 	FLOAT,   &mfact },
+};
+
+static char *colors[][3] = {
+       /*               fg           bg           border   */
+       [SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
+       [SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
 };
 
 /* key definitions */

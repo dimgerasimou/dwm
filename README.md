@@ -35,6 +35,7 @@ This build can be installed normally as stock dwm, however there is an install s
 - focusonclick
 - adjacenttag
 - scratchpad
+- barpadding
 
 ## Running dwm
 
