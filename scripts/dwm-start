@@ -23,7 +23,7 @@
 # Set default volume settings
 /usr/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.8
 /usr/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 1
-(sleep 0.5 && (pkill -RTMIN+10 dwmblocks))&
+(sleep 0.2 && (pkill -RTMIN+10 dwmblocks))&
 
 # Start dwm
 /usr/local/bin/dwm

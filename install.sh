@@ -101,6 +101,7 @@ function install {
 	echo ""
 	sudo make --directory=$SRC install
 	echo ""
+	copyScripts
 }
 
 function uninstall {
