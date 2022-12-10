@@ -21,19 +21,19 @@ static int showbar                         = 1;    /* 0: no bar */
 static int topbar                          = 1;    /* 0: bottom bar */
 static const unsigned int hidevacanttags   = 1;    /* 1: hide vacant tags */
 static const int vertpad                   = 10;   /* vertical padding above the bar */
-static const int sidepad                   = 10;   /* horizontal padding of the bar  */
-static const int underpad                  = 12;   /* vertical padding below the bar */
+static const int sidepad                   = 20;   /* horizontal padding of the bar  */
+static const int underpad                  = 0;    /* vertical padding below the bar */
 
 /* windows */
-static const int swallowfloating    = 0;     /* 1: swallow floating windows by default */
+static const int swallowfloating    = 1;     /* 1: swallow floating windows by default */
 static unsigned int borderpx        = 2;     /* border pixel of windows */
 static unsigned int snap            = 32;    /* snap pixel */
 static const int focusonwheel       = 1;     /* focus window on scrolling */
 static const unsigned int gappih    = 20;    /* horiz inner gap between windows */
-static const unsigned int gappiv    = 10;    /* vert inner gap between windows */
-static const unsigned int gappoh    = 10;    /* horiz outer gap between windows and screen edge */
-static const unsigned int gappov    = 30;    /* vert outer gap between windows and screen edge */
-static       int smartgaps          = 1;     /* 1: no outer gap when there is only one window */
+static const unsigned int gappiv    = 20;    /* vert inner gap between windows */
+static const unsigned int gappoh    = 20;    /* horiz outer gap between windows and screen edge */
+static const unsigned int gappov    = 20;    /* vert outer gap between windows and screen edge */
+static       int smartgaps          = 0;     /* 1: no outer gap when there is only one window */
 
 /* fonts and colors */
 static const char *fonts[]          = { "Fira Mono:style=Regular:size=11",
