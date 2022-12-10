@@ -285,6 +285,7 @@ static void seturgent(Client *c, int urg);
 static void showhide(Client *c);
 static void sigchld(int unused);
 static int solitary(Client *c);
+static Monitor *statustomon(Monitor *m);
 static void spawn(const Arg *arg);
 static Monitor *systraytomon(Monitor *m);
 static void swallow(Client *p, Client *c);
@@ -1074,7 +1075,7 @@ drawbar(Monitor *m)
 		stw = getsystraywidth();
 
 	/* draw status first so it can be overdrawn by tags later */
-	if (m == selmon || showstatusallmon) { /* status is only drawn on selected monitor */
+	if (showstatusallmon || m == statustomon(m)) {
 		tw = m->ww - drawstatusbar(m, bh, stext);
 	}
 
@@ -2376,6 +2377,22 @@ spawn(const Arg *arg)
 	}
 }
 
+Monitor *
+statustomon(Monitor *m) {
+	Monitor *t;
+	int i, n;
+	if(!statuspinning) {
+		if(!m)
+			return selmon;
+		return m == selmon ? m : NULL;
+	}
+	for(n = 1, t = mons; t && t->next; n++, t = t->next) ;
+	for(i = 1, t = mons; t && t->next && i < statuspinning; i++, t = t->next) ;
+	if(statuspinningfailfirst && n < statuspinning)
+		return mons;
+	return t;
+}
+
 void
 swallow(Client *p, Client *c)
 {
@@ -2418,6 +2435,22 @@ swallowingclient(Window w)
 	}
 
 	return NULL;
+}
+
+Monitor *
+systraytomon(Monitor *m) {
+	Monitor *t;
+	int i, n;
+	if(!systraypinning) {
+		if(!m)
+			return selmon;
+		return m == selmon ? m : NULL;
+	}
+	for(n = 1, t = mons; t && t->next; n++, t = t->next) ;
+	for(i = 1, t = mons; t && t->next && i < systraypinning; i++, t = t->next) ;
+	if(systraypinningfailfirst && n < systraypinning)
+		return mons;
+	return t;
 }
 
 void
@@ -2910,10 +2943,8 @@ updatestatus(void)
 {
 	if (!gettextprop(root, XA_WM_NAME, stext, sizeof(stext)))
 		strcpy(stext, "dwm-"VERSION);
-	if (!showstatusallmon)
-		drawbar(selmon);
-	else
-		drawbars();
+		
+	drawbars();
 
 	updatesystray();
 }
@@ -3226,22 +3257,6 @@ xerrorstart(Display *dpy, XErrorEvent *ee)
 {
 	die("dwm: another window manager is already running");
 	return -1;
-}
-
-Monitor *
-systraytomon(Monitor *m) {
-	Monitor *t;
-	int i, n;
-	if(!systraypinning) {
-		if(!m)
-			return selmon;
-		return m == selmon ? m : NULL;
-	}
-	for(n = 1, t = mons; t && t->next; n++, t = t->next) ;
-	for(i = 1, t = mons; t && t->next && i < systraypinning; i++, t = t->next) ;
-	if(systraypinningfailfirst && n < systraypinning)
-		return mons;
-	return t;
 }
 
 void

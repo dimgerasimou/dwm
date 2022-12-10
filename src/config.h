@@ -6,15 +6,19 @@
 /* appearance */
 
 /* bar */
-static const unsigned int systraypinning   = 0;    /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
+static const unsigned int systraypinning   = 2;    /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systrayonleft    = 0;    /* 0: systray in the right corner, >0: systray on left of status text */
 static const unsigned int systrayspacing   = 2;    /* systray spacing */
 static const int systraypinningfailfirst   = 1;    /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
 static const int showsystray               = 1;    /* 0: no systray */
+
+static const unsigned int statuspinning    = 0;    /* 0: sloppy statusbar follows selected monitor, >0: pin statusbar to monitor X */
+static const int statuspinningfailfirst    = 1;    /* 1: if pinning fails, display statusbar on the first monitor, False: display statusbar on the last monitor*/
+static const unsigned int showstatusallmon = 0;    /* 1: show statusbar on all monitors */
+static const unsigned int statusbarlhpad   = 0;    /* right horizontal padding of status bar */
+
 static int showbar                         = 1;    /* 0: no bar */
 static int topbar                          = 1;    /* 0: bottom bar */
-static const unsigned int statusbarlhpad   = 0;    /* right horizontal padding of status bar */
-static const unsigned int showstatusallmon = 1;    /* 1: show statusbar on all monitors */
 static const unsigned int hidevacanttags   = 1;    /* 1: hide vacant tags */
 static const int vertpad                   = 10;   /* vertical padding above the bar */
 static const int sidepad                   = 10;   /* horizontal padding of the bar  */
@@ -24,7 +28,7 @@ static const int underpad                  = 12;   /* vertical padding below the
 static const int swallowfloating    = 0;     /* 1: swallow floating windows by default */
 static unsigned int borderpx        = 2;     /* border pixel of windows */
 static unsigned int snap            = 32;    /* snap pixel */
-static const int focusonwheel       = 0;
+static const int focusonwheel       = 1;     /* focus window on scrolling */
 static const unsigned int gappih    = 20;    /* horiz inner gap between windows */
 static const unsigned int gappiv    = 10;    /* vert inner gap between windows */
 static const unsigned int gappoh    = 10;    /* horiz outer gap between windows and screen edge */
