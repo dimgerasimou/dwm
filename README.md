@@ -34,6 +34,7 @@ This build can be installed normally as stock dwm, however there is an install s
 - restoreafterrestart
 - focusonclick
 - adjacenttag
+- scratchpad
 
 ## Running dwm
 

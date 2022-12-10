@@ -47,6 +47,7 @@ static char *colors[][3] = {
 
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+static unsigned int scratchtag = 1 << LENGTH(tags);
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -130,6 +131,8 @@ static const char *termcmd[]    = { "st", NULL };
 static const char *browsercmd[] = { "firefox", NULL };
 static const char *emailcmd[]   = { "thunderbird", NULL };
 static const char *explrcmd[]   = { "dolphin", NULL };
+static const char scratchpadname[] = "scratchpad";
+static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34", NULL };
 
 /* volume control */
 static const char *volumeup[]   = { CONFIGPATH(audiocontrol), "sink",     "increase",    NULL };
@@ -154,6 +157,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_e,         spawn,          {.v = emailcmd } },
 	{ MODKEY,                       XK_r,         spawn,          {.v = explrcmd } },
 	{ MODKEY,                       XK_space,     spawn,          {.v = switchlang } },
+	{ MODKEY,                       XK_grave,     togglescratch,  {.v = scratchpadcmd } },
 
 	{ MODKEY,                       XK_b,         togglebar,      {0} },
 	{ MODKEY,                       XK_j,         focusstack,     {.i = +1 } },
