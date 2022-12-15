@@ -36,10 +36,9 @@ static const unsigned int gappov    = 20;    /* vert outer gap between windows a
 static       int smartgaps          = 0;     /* 1: no outer gap when there is only one window */
 
 /* fonts and colors */
-static const char *fonts[]          = { "Fira Mono:style=Regular:size=11",
-										"JoyPixels:style=Regular:size=11:antialias=true",
-										"Hack Nerd Font Mono:style=Regular:size=11:antialias=true" , 
-										"monospace:size=10" };
+static const char *fonts[]          = {"Source Code Pro:style=Regular:size=11",//"FiraCode Nerd Font:style=Regular:size=11:antialias=true",
+                                       "JoyPixels:style=Regular:size=11:antialias=true"};
+
 static char normbgcolor[]           = "#323232";
 static char normbordercolor[]       = "#444444";
 static char normfgcolor[]           = "#bbbbbb";
@@ -61,6 +60,9 @@ static const Rule rules[] = {
 	{ "thunderbird", NULL,       NULL,           1 << 8,       0,            0,            -1,          -1 },
 	{ "alacritty",   NULL,       NULL,           0,            0,            1,            0,           -1 },
 	{ "st",          NULL,       NULL,           0,            0,            1,            0,           -1 },
+	{ "St",          NULL,       NULL,           0,            0,            1,            0,           -1 },
+	{ "st-256color", NULL,       NULL,           0,            0,            1,            0,           -1 },
+	{ "St-256color", NULL,       NULL,           0,            0,            1,            0,           -1 },
 	{ "vscodium",    NULL,       NULL,           0,            0,            0,            0,           -1 },
 	{ NULL,          NULL,       "Event Tester", 0,            0,            0,            1,           -1 }, /* xev */
 };
@@ -106,12 +108,12 @@ ResourcePref resources[] = {
 		{ "selbordercolor",     STRING,  &selbordercolor },
 		{ "selfgcolor",         STRING,  &selfgcolor },
 		{ "borderpx",          	INTEGER, &borderpx },
-		{ "snap",          		INTEGER, &snap },
+		{ "snap",               INTEGER, &snap },
 		{ "showbar",          	INTEGER, &showbar },
 		{ "topbar",          	INTEGER, &topbar },
 		{ "nmaster",          	INTEGER, &nmaster },
 		{ "resizehints",       	INTEGER, &resizehints },
-		{ "mfact",      	 	FLOAT,   &mfact },
+		{ "mfact",              FLOAT,   &mfact },
 };
 
 static char *colors[][3] = {
