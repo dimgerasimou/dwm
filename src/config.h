@@ -20,8 +20,8 @@ static const unsigned int statusbarlhpad   = 0;    /* right horizontal padding o
 static int showbar                         = 1;    /* 0: no bar */
 static int topbar                          = 1;    /* 0: bottom bar */
 static const unsigned int hidevacanttags   = 1;    /* 1: hide vacant tags */
-static const int vertpad                   = 10;   /* vertical padding above the bar */
-static const int sidepad                   = 20;   /* horizontal padding of the bar  */
+static const int vertpad                   = 0;    /* vertical padding above the bar */
+static const int sidepad                   = 0;    /* horizontal padding of the bar  */
 static const int underpad                  = 0;    /* vertical padding below the bar */
 
 /* windows */
@@ -33,7 +33,7 @@ static const unsigned int gappih    = 20;    /* horiz inner gap between windows 
 static const unsigned int gappiv    = 20;    /* vert inner gap between windows */
 static const unsigned int gappoh    = 20;    /* horiz outer gap between windows and screen edge */
 static const unsigned int gappov    = 20;    /* vert outer gap between windows and screen edge */
-static       int smartgaps          = 0;     /* 1: no outer gap when there is only one window */
+static       int smartgaps          = 1;     /* 1: no outer gap when there is only one window */
 
 /* fonts and colors */
 static const char *fonts[]          = {"Hack:style=Regular:szie=11:antialias=true",
