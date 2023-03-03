@@ -37,7 +37,7 @@ static       int smartgaps          = 1;     /* 1: no outer gap when there is on
 
 /* fonts and colors */
 static const char *fonts[]          = {"Hack:style=Regular:szie=11:antialias=true",
-                                       "JoyPixels:style=Regular:size=11:antialias=true"};
+                                       "Font Awesome 6 Free Regular:style=Regular:size=11:antialias=true"};
 
 static char normbgcolor[]           = "#323232";
 static char normbordercolor[]       = "#444444";
