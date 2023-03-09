@@ -27,14 +27,14 @@ static const int underpad                  = 0;    /* vertical padding below the
 
 /* windows */
 static const int swallowfloating    = 1;     /* 1: swallow floating windows by default */
-static unsigned int borderpx        = 2;     /* border pixel of windows */
+static unsigned int borderpx        = 0;     /* border pixel of windows */
 static unsigned int snap            = 32;    /* snap pixel */
 static const int focusonwheel       = 1;     /* focus window on scrolling */
 static const unsigned int gappih    = 20;    /* horiz inner gap between windows */
 static const unsigned int gappiv    = 20;    /* vert inner gap between windows */
 static const unsigned int gappoh    = 20;    /* horiz outer gap between windows and screen edge */
 static const unsigned int gappov    = 20;    /* vert outer gap between windows and screen edge */
-static       int smartgaps          = 1;     /* 1: no outer gap when there is only one window */
+static       int smartgaps          = 0;     /* 1: no outer gap when there is only one window */
 
 /* fonts and colors */
 static const char *fonts[]          = {"Hack:style=Regular:szie=11:antialias=true",

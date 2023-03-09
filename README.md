@@ -7,16 +7,15 @@ This is a heavily patched version with all the scripts i use for my configuratio
 
 In order to build dwm you need the Xlib header files.
 This patched version as is, requires the following packages:
-- feh
-- brightnessctl
-- wireplumber
-- ttf-joypixels
-- easyeffects
-- picom
+
+- ttf-font-awsome
+- ttf-hack
 
 ## Installation
-
-This build can be installed normally as stock dwm, however there is an install script that helps with all the scripts installation and configuration of this build (use --help option).
+To install, just execute:
+```bash
+sudo make clean install
+```
 
 ## Patches
 
@@ -39,11 +38,13 @@ This build can be installed normally as stock dwm, however there is an install s
 - statuscmd
 
 ## Running dwm
+In order to be run through a login manager, a desktop file must be created at `/usr/share/xsessions`.
 
-By using the install script running dwm can be done automaticly through the login manager.
 If not using one, it can be executed by adding `exec dwm` in the .xinitrc file.
 
 For a statusbar any can be installed but you can use [my version](https://github.com/dimgerasimou/dwm-asyncblocks 'dwm-asyncblocks') of dwmblocks.
+
+See also [my binaries](https://github.com/dimgerasimou/binaries 'binaries')
 
 ## Configuration
 
