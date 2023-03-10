@@ -37,8 +37,8 @@ static const unsigned int gappov    = 20;    /* vert outer gap between windows a
 static       int smartgaps          = 0;     /* 1: no outer gap when there is only one window */
 
 /* fonts and colors */
-static const char *fonts[]          = {"Hack:style=Regular:szie=11:antialias=true",
-                                       "Font Awesome 6 Free Regular:style=Regular:size=11:antialias=true"};
+static const char *fonts[]          = { "JetBrains Mono Nerd Font:style=Regular:size=11",
+                                        "Font Awesome 6 Free:style=Regular:size=11"};
 
 static char normbgcolor[]           = "#323232";
 static char normbordercolor[]       = "#444444";
