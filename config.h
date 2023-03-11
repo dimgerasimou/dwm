@@ -24,8 +24,8 @@ static const unsigned int hidevacanttags   = 1;    /* 1: hide vacant tags */
 static const int vertpad                   = 0;    /* vertical padding above the bar */
 static const int sidepad                   = 0;    /* horizontal padding of the bar  */
 static const int underpad                  = 0;    /* vertical padding below the bar */
-static const unsigned int hidetitlebar     = 0;    /* 1: no window titles */
-static const unsigned int hidelayout       = 0;    /* 1: no layout symbol */
+static const unsigned int hidetitlebar     = 1;    /* 1: no window titles */
+static const unsigned int hidelayout       = 1;    /* 1: no layout symbol */
 
 /* windows */
 static const int swallowfloating    = 1;     /* 1: swallow floating windows by default */
