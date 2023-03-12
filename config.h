@@ -21,8 +21,8 @@ static const unsigned int statusbarlhpad   = 0;    /* right horizontal padding o
 static int showbar                         = 1;    /* 0: no bar */
 static int topbar                          = 1;    /* 0: bottom bar */
 static const unsigned int hidevacanttags   = 1;    /* 1: hide vacant tags */
-static const int vertpad                   = 10;    /* vertical padding above the bar */
-static const int sidepad                   = 10;    /* horizontal padding of the bar  */
+static const int vertpad                   = 0;    /* vertical padding above the bar */
+static const int sidepad                   = 0;    /* horizontal padding of the bar  */
 static const int underpad                  = 0;    /* vertical padding below the bar */
 static const unsigned int hidetitlebar     = 1;    /* 1: no window titles */
 static const unsigned int hidelayout       = 1;    /* 1: no layout symbol */
@@ -157,6 +157,8 @@ static const char *brightdown[] = { "brightnessctl", "--class=backlight", "set",
 /* keyboard language */
 static const char *switchlang[] = { CONFIGPATH(swaplanguage), NULL };
 
+static const char *screenshot[] = { CONFIGPATH(takescreenshot), NULL };
+
 /* keys */
 static const Key keys[] = {
 	/* modifier                     key           function        argument */
@@ -225,7 +227,7 @@ static const Key keys[] = {
 
 	{ 0,                            XF86XK_MonBrightnessUp,  spawn, {.v = brightup } },
 	{ 0,                            XF86XK_MonBrightnessDown,spawn, {.v = brightdown } },
-
+	{ 0,                            XK_Print,                spawn, {.v = screenshot } },
 
 	TAGKEYS(                        XK_1,                         0)
 	TAGKEYS(                        XK_2,                         1)
