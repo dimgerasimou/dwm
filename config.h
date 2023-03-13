@@ -25,7 +25,7 @@ static const int vertpad                   = 0;    /* vertical padding above the
 static const int sidepad                   = 0;    /* horizontal padding of the bar  */
 static const int underpad                  = 0;    /* vertical padding below the bar */
 static const unsigned int hidetitlebar     = 1;    /* 1: no window titles */
-static const unsigned int hidelayout       = 1;    /* 1: no layout symbol */
+static const unsigned int hidelayout       = 0;    /* 1: no layout symbol */
 
 /* windows */
 static const int swallowfloating    = 1;     /* 1: swallow floating windows by default */
@@ -136,19 +136,26 @@ static char *colors[][3] = {
 /* commands */
 
 /* application launch */
-static const char *dmenucmd[]   = { "dmenu_run", "-h", "26", "-t", "-i", "-n", NULL };
+static const char *dmenucmd[]   = { "dmenu-launcher", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
 static const char *termcmd[]    = { "st", NULL };
 static const char *browsercmd[] = { "firefox", NULL };
 static const char *emailcmd[]   = { "thunderbird", NULL };
 static const char *explrcmd[]   = { "dolphin", NULL };
 static const char scratchpadname[] = "scratchpad";
 static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34", NULL };
-
+static const char *layoutmenu_cmd = CONFIGPATH(layoutmenu);
 /* volume control */
 static const char *volumeup[]   = { CONFIGPATH(audiocontrol), "sink",     "increase",    NULL };
 static const char *volumedown[] = { CONFIGPATH(audiocontrol), "sink",     "decrease",    NULL };
 static const char *volumemute[] = { CONFIGPATH(audiocontrol), "sink",     "toggle-mute", NULL };
 static const char *micmute[]    = { CONFIGPATH(audiocontrol), "source",   "toggle-mute", NULL };
+
+/* playback control via dbus */
+static const char *dbustog[]   = { CONFIGPATH(mediacontrol), "toggle", NULL };
+static const char *dbusstop[]  = { CONFIGPATH(mediacontrol), "stop",   NULL };
+static const char *dbusnext[]  = { CONFIGPATH(mediacontrol), "next",   NULL };
+static const char *dbusprev[]  = { CONFIGPATH(mediacontrol), "prev",   NULL };
+
 
 /* brightness control */
 static const char *brightup[]   = { "brightnessctl", "--class=backlight", "set", "+5%", NULL };
@@ -163,7 +170,7 @@ static const char *screenshot[] = { CONFIGPATH(takescreenshot), NULL };
 static const Key keys[] = {
 	/* modifier                     key           function        argument */
 	/* spawn */
-	{ MODKEY,                       XK_p,         spawn,          {.v = dmenucmd } },
+	{ MODKEY,                       XK_a,         spawn,          {.v = dmenucmd } },
 	{ MODKEY,                       XK_Return,    spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_w,         spawn,          {.v = browsercmd } },
 	{ MODKEY,                       XK_e,         spawn,          {.v = emailcmd } },
@@ -224,6 +231,10 @@ static const Key keys[] = {
 	{ 0,                            XF86XK_AudioMute,        spawn, {.v = volumemute } },
 	{ 0,                            XF86XK_AudioMicMute,     spawn, {.v = micmute } },
 	{ MODKEY,                       XK_F5,                   spawn, {.v = micmute } },
+	{ 0,                            XF86XK_AudioPlay,        spawn, {.v = dbustog } },
+	{ 0,                            XF86XK_AudioStop,        spawn, {.v = dbusstop } },
+	{ 0,                            XF86XK_AudioNext,        spawn, {.v = dbusnext } },
+	{ 0,                            XF86XK_AudioPrev,        spawn, {.v = dbusprev } },
 
 	{ 0,                            XF86XK_MonBrightnessUp,  spawn, {.v = brightup } },
 	{ 0,                            XF86XK_MonBrightnessDown,spawn, {.v = brightdown } },
@@ -249,6 +260,7 @@ static const Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
+	{ ClkLtSymbol,          0,              Button1,        layoutmenu,     {0} },
 	{ ClkStatusText,        0,              Button1,        sigstatusbar,   {.i = 1} },
 	{ ClkStatusText,        0,              Button2,        sigstatusbar,   {.i = 2} },
 	{ ClkStatusText,        0,              Button3,        sigstatusbar,   {.i = 3} },
