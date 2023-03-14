@@ -137,6 +137,7 @@ static char *colors[][3] = {
 
 /* application launch */
 static const char *dmenucmd[]   = { "dmenu-launcher", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
+static const char *dmenuall[]   = { "dmenu_run", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
 static const char *termcmd[]    = { "st", NULL };
 static const char *browsercmd[] = { "firefox", NULL };
 static const char *emailcmd[]   = { "thunderbird", NULL };
@@ -171,6 +172,7 @@ static const Key keys[] = {
 	/* modifier                     key           function        argument */
 	/* spawn */
 	{ MODKEY,                       XK_a,         spawn,          {.v = dmenucmd } },
+	{ MODKEY|ShiftMask,             XK_a,         spawn,          {.v = dmenuall } },
 	{ MODKEY,                       XK_Return,    spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_w,         spawn,          {.v = browsercmd } },
 	{ MODKEY,                       XK_e,         spawn,          {.v = emailcmd } },
