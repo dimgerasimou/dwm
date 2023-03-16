@@ -29,6 +29,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <X11/cursorfont.h>
 #include <X11/keysym.h>
@@ -273,6 +274,7 @@ static void restack(Monitor *m);
 static void restoresession(void);
 static void rotatestack(const Arg *arg);
 static void run(void);
+static void runautostart(void);
 static void savesession(void);
 static void scan(void);
 static int sendevent(Window w, Atom proto, int m, long d0, long d1, long d2, long d3, long d4);
@@ -335,6 +337,7 @@ static void zoom(const Arg *arg);
 
 /* variables */
 static Systray *systray = NULL;
+static const char autostartsh[] = "autostart.sh";
 static const char broken[] = "broken";
 static char stext[1024];
 static int statussig;
@@ -2141,6 +2144,29 @@ run(void)
 }
 
 void
+runautostart(void)
+{
+	char *path;
+	char *home;
+
+	if ((home = getenv("HOME")) == NULL)
+		/* this is almost impossible */
+		return;
+	
+	path = ecalloc(1, strlen(home) + strlen(autostartpath) + strlen(autostartsh) + 3);
+
+	if (sprintf(path, "%s/%s/%s", home, autostartpath, autostartsh) <= 0) {
+		free(path);
+		return;
+	}
+
+	if (access(path, X_OK) == 0)
+		system(strcat(path, " &"));
+
+	free(path);
+}
+
+void
 savesession(void)
 {
 	FILE *fw = fopen(SESSION_FILE, "w");
@@ -3399,6 +3425,7 @@ main(int argc, char *argv[])
 		die("pledge");
 #endif /* __OpenBSD__ */
 	scan();
+	runautostart();
 	restoresession();
 	run();
 	if(restart) execvp(argv[0], argv);

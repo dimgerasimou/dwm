@@ -4,6 +4,8 @@
 #define SESSION_FILE "/tmp/dwm-session"
 #define STATUSBAR "dwmblocks"
 
+static const char autostartpath[] = ".local/bin/dwm";
+
 /* appearance */
 
 /* bar */
