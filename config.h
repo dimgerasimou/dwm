@@ -138,7 +138,7 @@ static char *colors[][3] = {
 /* commands */
 
 /* application launch */
-static const char *dmenucmd[]   = { "dmenu-launcher", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
+static const char *dmenucmd[]   = { "dmenu_appmenu", "-nn", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
 static const char *dmenuall[]   = { "dmenu_run", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
 static const char *termcmd[]    = { "st", NULL };
 static const char *browsercmd[] = { "firefox", NULL };
