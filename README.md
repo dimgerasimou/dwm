@@ -5,11 +5,14 @@ This is a heavily patched version with all the scripts i use for my configuratio
 
 ## Requirements
 
-In order to build dwm you need the Xlib header files.
-This patched version as is, requires the following packages:
+In order to build dwm you need the Xlib header files and the predifined fonts.
+To build on Arch Linux as is, the following packages are required:
 
 - ttf-font-awsome
-- ttf-hack
+- ttf-jetbrains-mono-nerd
+- libx11
+- libxinerama
+- libxft
 
 ## Installation
 To install, just execute:
