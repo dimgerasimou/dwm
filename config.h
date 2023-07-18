@@ -139,6 +139,7 @@ static char *colors[][3] = {
 
 /* application launch */
 static const char *dmenucmd[]   = { "dmenu_appmenu", "-nn", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
+static const char *clipcmd[]    = { "clipmenu", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
 static const char *dmenuall[]   = { "dmenu_run", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
 static const char *termcmd[]    = { "st", NULL };
 static const char *browsercmd[] = { "firefox", NULL };
@@ -186,6 +187,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_t,         spawn,          {.v = emacscmd } },
 	{ MODKEY,                       XK_grave,     togglescratch,  {.v = scratchpadcmd } },
 	{ MODKEY,                       XK_p,         spawn,          {.v = lockcmd } },
+	{ MODKEY,                       XK_c,         spawn,          {.v = clipcmd } },
 
 	{ MODKEY,                       XK_b,         togglebar,      {0} },
 	{ MODKEY,                       XK_j,         focusstack,     {.i = +1 } },
