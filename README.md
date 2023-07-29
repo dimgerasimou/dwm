@@ -52,3 +52,8 @@ See also [my binaries](https://github.com/dimgerasimou/binaries 'binaries')
 ## Configuration
 
 The configuration of dwm is done by creating a custom config.h and (re)compiling the source code.
+
+## Examples
+
+![Desktop](resources/Desktop.png)
+![Setup](resources/St-neovim.png)
