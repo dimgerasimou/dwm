@@ -11,7 +11,7 @@ static const char autostartpath[] = ".local/bin/dwm";
 /* bar */
 static const unsigned int systraypinning   = 0;    /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systrayonleft    = 0;    /* 0: systray in the right corner, >0: systray on left of status text */
-static const unsigned int systrayspacing   = 2;    /* systray spacing */
+static const unsigned int systrayspacing   = 5;    /* systray spacing */
 static const int systraypinningfailfirst   = 1;    /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
 static const int showsystray               = 1;    /* 0: no systray */
 
@@ -45,6 +45,7 @@ static const char *fonts[]          = { "JetBrains Mono Nerd Font:style=Regular:
                                         "Font Awesome 6 Free:style=Regular:size=11"};
 
 static char normbgcolor[]           = "#323232";
+static char systraybg[]             = "#323232";
 static char normbordercolor[]       = "#444444";
 static char normfgcolor[]           = "#bbbbbb";
 static char selfgcolor[]            = "#eeeeee";
@@ -62,7 +63,7 @@ static const Rule rules[] = {
 	 */
 	/* class         instance    title           tags mask     isfloating    isterminal    noswallow    monitor */
 	{ "firefox",     NULL,       NULL,           0,            0,            0,            0,           -1 },
-	{ "thunderbird", NULL,       NULL,           1 << 8,       0,            0,            -1,          -1 },
+	{ "thunderbird", NULL,       NULL,           0,            0,            0,            -1,          -1 },
 	{ "Alacritty",   NULL,       NULL,           0,            0,            1,            0,           -1 },	
 	{ "St",          NULL,       NULL,           0,            0,            1,            0,           -1 },
 	{ "vscodium",    NULL,       NULL,           0,            0,            0,            0,           -1 },
@@ -104,6 +105,7 @@ static const Layout layouts[] = {
  */
 ResourcePref resources[] = {
 		{ "normbgcolor",        STRING,  &normbgcolor },
+		{ "systraybg",          STRING,  &systraybg },
 		{ "normbordercolor",    STRING,  &normbordercolor },
 		{ "normfgcolor",        STRING,  &normfgcolor },
 		{ "selbgcolor",         STRING,  &selbgcolor },
@@ -122,6 +124,7 @@ static char *colors[][3] = {
        /*               fg           bg           border   */
        [SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
        [SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
+       [SchemeTray] = { normfgcolor, systraybg,   normbordercolor },
 };
 
 /* key definitions */
