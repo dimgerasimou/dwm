@@ -41,7 +41,7 @@ static const unsigned int gappov    = 20;    /* vert outer gap between windows a
 static       int smartgaps          = 0;     /* 1: no outer gap when there is only one window */
 
 /* fonts and colors */
-static const char *fonts[]          = { "JetBrains Mono Nerd Font:style=Regular:size=11",
+static const char *fonts[]          = { "JetBrainsMono NF:style=Regular:size=11",
                                         "Font Awesome 6 Free:style=Regular:size=11"};
 
 static char normbgcolor[]           = "#323232";
@@ -172,7 +172,7 @@ static const char *brightup[]   = { "brightnessctl", "--class=backlight", "set",
 static const char *brightdown[] = { "brightnessctl", "--class=backlight", "set", "5%-", NULL };
 
 /* keyboard language */
-static const char *switchlang[] = { CONFIGPATH(swaplanguage), NULL };
+static const char *switchlang[] = { "dwmblocksctl", "-s", "keyboard", NULL };
 
 static const char *screenshot[] = { CONFIGPATH(takescreenshot), NULL };
 
