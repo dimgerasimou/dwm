@@ -142,6 +142,7 @@ static char *colors[][3] = {
 
 /* application launch */
 static const char *dmenucmd[]   = { "dmenu_appmenu", "-nn", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
+static const char *dmenuaudio[] = { "/home/dimgerasimou/.local/bin/dmenu/dmenu-audio-source-select", NULL};
 static const char *clipcmd[]    = { "clipmenu", "-a", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
 static const char *dmenuall[]   = { "dmenu_run", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
 static const char *termcmd[]    = { "st", NULL };
@@ -245,6 +246,7 @@ static const Key keys[] = {
 	{ 0,                            XF86XK_AudioMute,        spawn, {.v = volumemute } },
 	{ 0,                            XF86XK_AudioMicMute,     spawn, {.v = micmute } },
 	{ MODKEY,                       XK_F5,                   spawn, {.v = micmute } },
+	{ MODKEY,                       XK_F6,                   spawn, {.v = dmenuaudio } },
 	{ 0,                            XF86XK_AudioPlay,        spawn, {.v = dbustog } },
 	{ 0,                            XF86XK_AudioStop,        spawn, {.v = dbusstop } },
 	{ 0,                            XF86XK_AudioNext,        spawn, {.v = dbusnext } },
