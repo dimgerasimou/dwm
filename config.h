@@ -173,7 +173,7 @@ static const char *brightup[]   = { "brightnessctl", "--class=backlight", "set",
 static const char *brightdown[] = { "brightnessctl", "--class=backlight", "set", "5%-", NULL };
 
 /* keyboard language */
-static const char *switchlang[] = { "dwmblocksctl", "-s", "keyboard", NULL };
+static const char *switchlang[] = { CONFIGPATH(keyboard.sh), NULL };
 
 static const char *screenshot[] = { CONFIGPATH(takescreenshot), NULL };
 
