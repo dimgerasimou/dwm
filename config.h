@@ -52,6 +52,7 @@ static char normbordercolor[]       = "#444444";
 static char normfgcolor[]           = "#bbbbbb";
 static char selfgcolor[]            = "#eeeeee";
 static char selbordercolor[]        = "#296991";
+static char urgbordercolor[]        = "#005577";
 static char selbgcolor[]            = "#296991";
 
 /* tagging */
@@ -112,6 +113,7 @@ ResourcePref resources[] = {
 		{ "normfgcolor",        STRING,  &normfgcolor },
 		{ "selbgcolor",         STRING,  &selbgcolor },
 		{ "selbordercolor",     STRING,  &selbordercolor },
+		{ "urgbordercolor",     STRING,  &urgbordercolor },
 		{ "selfgcolor",         STRING,  &selfgcolor },
 		{ "borderpx",          	INTEGER, &borderpx },
 		{ "snap",               INTEGER, &snap },
@@ -126,6 +128,7 @@ static char *colors[][3] = {
        /*               fg           bg           border   */
        [SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
        [SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
+       [SchemeUrg]  = { selfgcolor,  selbgcolor,  urgbordercolor  },
        [SchemeTray] = { normfgcolor, systraybg,   normbordercolor },
 };
 
