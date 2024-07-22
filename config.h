@@ -39,6 +39,8 @@ static const unsigned int gappiv    = 20;    /* vert inner gap between windows *
 static const unsigned int gappoh    = 20;    /* horiz outer gap between windows and screen edge */
 static const unsigned int gappov    = 20;    /* vert outer gap between windows and screen edge */
 static       int smartgaps          = 0;     /* 1: no outer gap when there is only one window */
+static const unsigned int warpmon   = 1;     /* warp cursor to selected monitor */
+static const unsigned int warpwin   = 1;     /* warp cursor to selected window */
 
 /* fonts and colors */
 static const char *fonts[]          = { "JetBrainsMono NF:style=Regular:size=11",

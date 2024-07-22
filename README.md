@@ -39,6 +39,7 @@ sudo make clean install
 - scratchpad
 - barpadding
 - statuscmd
+- warp
 
 ## Running dwm
 In order to be run through a login manager, a desktop file must be created at `/usr/share/xsessions`.
