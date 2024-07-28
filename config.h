@@ -43,7 +43,7 @@ static const unsigned int warpmon   = 1;     /* warp cursor to selected monitor 
 static const unsigned int warpwin   = 1;     /* warp cursor to selected window */
 
 /* fonts and colors */
-static const char *fonts[]          = { "JetBrainsMono NF:style=Regular:size=11",
+static const char *fonts[]          = { "FiraCode Nerd Font:style=Regular:size=11",
                                         "Font Awesome 6 Free:style=Regular:size=11"};
 
 static char normbgcolor[]           = "#323232";
