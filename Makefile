@@ -8,12 +8,6 @@ OBJ = ${SRC:.c=.o}
 
 all: dwm
 
-options:
-	@echo dwm build options:
-	@echo "CFLAGS   = ${CFLAGS}"
-	@echo "LDFLAGS  = ${LDFLAGS}"
-	@echo "CC       = ${CC}"
-
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
@@ -37,4 +31,4 @@ uninstall:
 	@rm -f ${DESTDIR}${PREFIX}/bin/dwm\
 		${DESTDIR}${MANPREFIX}/man1/dwm.1
 
-.PHONY: all options clean install uninstall
+.PHONY: all clean install uninstall
