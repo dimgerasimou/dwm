@@ -167,10 +167,10 @@ static const char *volumemute[] = { CONFIGPATH(audiocontrol), "sink",     "mute"
 static const char *micmute[]    = { CONFIGPATH(audiocontrol), "source",   "mute", NULL };
 
 /* playback control via dbus */
-static const char *dbustog[]   = { CONFIGPATH(mediacontrol), "toggle", NULL };
-static const char *dbusstop[]  = { CONFIGPATH(mediacontrol), "stop",   NULL };
-static const char *dbusnext[]  = { CONFIGPATH(mediacontrol), "next",   NULL };
-static const char *dbusprev[]  = { CONFIGPATH(mediacontrol), "prev",   NULL };
+static const char *dbustogg[] = { CONFIGPATH(mediacontrol), "toggle", NULL };
+static const char *dbusstop[] = { CONFIGPATH(mediacontrol), "stop",   NULL };
+static const char *dbusnext[] = { CONFIGPATH(mediacontrol), "next",   NULL };
+static const char *dbusprev[] = { CONFIGPATH(mediacontrol), "prev",   NULL };
 
 
 /* brightness control */
@@ -252,8 +252,9 @@ static const Key keys[] = {
 	{ 0,                            XF86XK_AudioMicMute,     spawn, {.v = micmute } },
 	{ MODKEY,                       XK_F5,                   spawn, {.v = micmute } },
 	{ MODKEY,                       XK_F6,                   spawn, {.v = dmenuaudio } },
-	{ 0,                            XF86XK_AudioPlay,        spawn, {.v = dbustog } },
+	{ 0,                            XF86XK_AudioPlay,        spawn, {.v = dbustogg } },
 	{ 0,                            XF86XK_AudioStop,        spawn, {.v = dbusstop } },
+	{ 0,                            XF86XK_AudioPause,       spawn, {.v = dbusstop } },
 	{ 0,                            XF86XK_AudioNext,        spawn, {.v = dbusnext } },
 	{ 0,                            XF86XK_AudioPrev,        spawn, {.v = dbusprev } },
 
