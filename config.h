@@ -1,10 +1,7 @@
 /* See LICENSE file for copyright and license details. */
 
-#define CONFIGPATH(script) "/home/dimgerasimou/.local/bin/dwm/" #script
 #define SESSION_FILE "/tmp/dwm-session"
 #define STATUSBAR "dwmblocks"
-
-static const char autostartpath[] = ".local/bin/dwm";
 
 /* appearance */
 
@@ -43,8 +40,10 @@ static const unsigned int warpmon   = 1;     /* warp cursor to selected monitor 
 static const unsigned int warpwin   = 1;     /* warp cursor to selected window */
 
 /* fonts and colors */
-static const char *fonts[]          = { "FiraCode Nerd Font:style=Regular:size=11",
-                                        "Font Awesome 6 Free:style=Regular:size=11"};
+static const char *fonts[] = {
+	"FiraCode Nerd Font:style=Regular:size=11",
+	"Font Awesome 6 Free:style=Regular:size=11",
+};
 
 static char normbgcolor[]           = "#323232";
 static char systraybg[]             = "#323232";
@@ -125,11 +124,11 @@ ResourcePref resources[] = {
 };
 
 static char *colors[][3] = {
-       /*               fg           bg           border   */
-       [SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
-       [SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
-       [SchemeUrg]  = { selfgcolor,  selbgcolor,  urgbordercolor  },
-       [SchemeTray] = { normfgcolor, systraybg,   normbordercolor },
+	/*               fg           bg           border   */
+	[SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
+	[SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
+	[SchemeUrg]  = { selfgcolor,  selbgcolor,  urgbordercolor  },
+	[SchemeTray] = { normfgcolor, systraybg,   normbordercolor },
 };
 
 /* key definitions */
@@ -144,135 +143,136 @@ static char *colors[][3] = {
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
+static const char scratchpadname[] = "scratchpad";
+static const char layoutmenu_cmd[] = "layoutmenu";
+static const char binpath[]        = ".local/bin/dwm";
 
 /* application launch */
-static const char *dmenucmd[]   = { "dmenu_appmenu", "-nn", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
-static const char *dmenuaudio[] = { "/home/dimgerasimou/.local/bin/dmenu/dmenu-audio-source-select", NULL};
-static const char *clipcmd[]    = { "clipmenu", "-a", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
-static const char *dmenuall[]   = { "dmenu_run", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
-static const char *termcmd[]    = { "st", NULL };
-static const char *browsercmd[] = { "firefox", NULL };
-static const char *emailcmd[]   = { "thunderbird", NULL };
-static const char *explrcmd[]   = { "pcmanfm", NULL };
-static const char scratchpadname[] = "scratchpad";
+static const char *dmenucmd[]      = { "dmenu_appmenu", "-nn", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
+static const char *dmenuaudio[]    = { "sh", "-c", "$HOME/.local/bin/dmenu/dmenu-audio-source-select", NULL};
+static const char *clipcmd[]       = { "clipmenu", "-a", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
+static const char *dmenuall[]      = { "dmenu_run", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
+static const char *xrandrset[]     = { "xrandr-setup", "-s", "-c", "-i", "-nn", "-h", "12", "-l", "5", "-p", "Select XRandR layout:", NULL};
+static const char *termcmd[]       = { "st", NULL };
+static const char *browsercmd[]    = { "firefox", NULL };
+static const char *emailcmd[]      = { "thunderbird", NULL };
+static const char *explrcmd[]      = { "pcmanfm", NULL };
 static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34", NULL };
-static const char *emacscmd[] = { "emacsclient", "-c", "-a", "'emacs'", NULL };
-static const char *layoutmenu_cmd = CONFIGPATH(layoutmenu);
-static const char *lockcmd[] = { "slock", NULL };
+static const char *lockcmd[]       = { "slock", NULL };
+static const char *dwmkeymenu[]    = { "sh", "-c", "$HOME/.local/bin/dwm/dwmkeymenu ~/.local/src/dwm/config.h", NULL };
 
 /* volume control */
-static const char *volumeup[]   = { CONFIGPATH(audiocontrol), "sink",     "increase",    NULL };
-static const char *volumedown[] = { CONFIGPATH(audiocontrol), "sink",     "decrease",    NULL };
-static const char *volumemute[] = { CONFIGPATH(audiocontrol), "sink",     "mute", NULL };
-static const char *micmute[]    = { CONFIGPATH(audiocontrol), "source",   "mute", NULL };
+static const char *volumeup[]   = { "audiocontrol", "sink",   "increase", NULL };
+static const char *volumedown[] = { "audiocontrol", "sink",   "decrease", NULL };
+static const char *volumemute[] = { "audiocontrol", "sink",   "mute",     NULL };
+static const char *micmute[]    = { "audiocontrol", "source", "mute",     NULL };
 
 /* playback control via dbus */
-static const char *dbustogg[] = { CONFIGPATH(mediacontrol), "toggle", NULL };
-static const char *dbusstop[] = { CONFIGPATH(mediacontrol), "stop",   NULL };
-static const char *dbusnext[] = { CONFIGPATH(mediacontrol), "next",   NULL };
-static const char *dbusprev[] = { CONFIGPATH(mediacontrol), "prev",   NULL };
+static const char *dbustogg[] = { "mediacontrol", "toggle", NULL };
+static const char *dbusstop[] = { "mediacontrol", "stop",   NULL };
+static const char *dbusnext[] = { "mediacontrol", "next",   NULL };
+static const char *dbusprev[] = { "mediacontrol", "prev",   NULL };
 
 
 /* brightness control */
 static const char *brightup[]   = { "brightnessctl", "--class=backlight", "set", "+5%", NULL };
 static const char *brightdown[] = { "brightnessctl", "--class=backlight", "set", "5%-", NULL };
 
-/* keyboard language */
-static const char *switchlang[] = { CONFIGPATH(keyboard.sh), NULL };
-
-static const char *screenshot[] = { CONFIGPATH(takescreenshot), NULL };
+static const char *switchlang[] = { "keyboard.sh", NULL };
+static const char *screenshot[] = { "takescreenshot", NULL };
 
 /* keys */
 static const Key keys[] = {
-	/* modifier                     key           function        argument */
-	/* spawn */
-	{ MODKEY,                       XK_a,         spawn,          {.v = dmenucmd } },
-	{ MODKEY|ShiftMask,             XK_a,         spawn,          {.v = dmenuall } },
-	{ MODKEY,                       XK_Return,    spawn,          {.v = termcmd } },
-	{ MODKEY,                       XK_w,         spawn,          {.v = browsercmd } },
-	{ MODKEY,                       XK_e,         spawn,          {.v = emailcmd } },
-	{ MODKEY,                       XK_r,         spawn,          {.v = explrcmd } },
-	{ MODKEY,                       XK_space,     spawn,          {.v = switchlang } },
-	{ MODKEY,                       XK_t,         spawn,          {.v = emacscmd } },
-	{ MODKEY,                       XK_grave,     togglescratch,  {.v = scratchpadcmd } },
-	{ MODKEY,                       XK_p,         spawn,          {.v = lockcmd } },
-	{ MODKEY,                       XK_c,         spawn,          {.v = clipcmd } },
+	/* modifier                     key              function        argument                    description */
+	/* spawn applications */
+	{ MODKEY,                       XK_a,            spawn,          {.v = dmenucmd}      }, /* Spawn dmenu */
+	{ MODKEY|ShiftMask,             XK_a,            spawn,          {.v = dmenuall}      }, /* Spawn dmenu (path) */
+	{ MODKEY,                       XK_Return,       spawn,          {.v = termcmd}       }, /* Spawn terminal */
+	{ MODKEY,                       XK_w,            spawn,          {.v = browsercmd}    }, /* Spawn browser */
+	{ MODKEY,                       XK_e,            spawn,          {.v = emailcmd}      }, /* Spawn e-mail client */
+	{ MODKEY,                       XK_s,            spawn,          {.v = explrcmd}      }, /* Spawn file explorer */
+	{ MODKEY,                       XK_space,        spawnbin,       {.v = switchlang}    }, /* Toggle language */
+	{ MODKEY,                       XK_grave,        togglescratch,  {.v = scratchpadcmd} }, /* Toggle sratchpad */
+	{ MODKEY,                       XK_p,            spawn,          {.v = lockcmd}       }, /* Lock */
+	{ MODKEY,                       XK_c,            spawn,          {.v = clipcmd}       }, /* Open clipboard */
 
-	{ MODKEY,                       XK_b,         togglebar,      {0} },
-	{ MODKEY,                       XK_j,         focusstack,     {.i = +1 } },
-	{ MODKEY,                       XK_k,         focusstack,     {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_j,         rotatestack,    {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_k,         rotatestack,    {.i = -1 } },
-	{ MODKEY,                       XK_i,         incnmaster,     {.i = +1 } },
-	{ MODKEY,                       XK_d,         incnmaster,     {.i = -1 } },
-	{ MODKEY,                       XK_h,         setmfact,       {.f = -0.05} },
-	{ MODKEY,                       XK_l,         setmfact,       {.f = +0.05} },
-/*	{ MODKEY,                       XK_Return,    zoom,           {0} }, */
-	{ MODKEY,                       XK_Tab,       view,           {0} },
-	{ MODKEY|ShiftMask,             XK_BackSpace, killclient,     {0} },
-	// { MODKEY,                       XK_t,         setlayout,      {.v = &layouts[0]} },
-	// { MODKEY,                       XK_f,         setlayout,      {.v = &layouts[1]} },
-	// { MODKEY,                       XK_m,         setlayout,      {.v = &layouts[2]} },
-	{ MODKEY|ControlMask,           XK_space,     setlayout,      {0} },
-	{ MODKEY|ShiftMask,             XK_space,     togglefloating, {0} },
-	{ MODKEY,                       XK_0,         view,           {.ui = ~0 } },
-	{ MODKEY|ShiftMask,             XK_0,         tag,            {.ui = ~0 } },
-	{ MODKEY,                       XK_comma,     focusmon,       {.i = -1 } },
-	{ MODKEY,                       XK_period,    focusmon,       {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_comma,     tagmon,         {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_period,    tagmon,         {.i = +1 } },
+	/* layouts */
+	{ MODKEY,                       XK_b,            togglebar,      {0}                  }, /* Toggle the status bar */
+	{ MODKEY,                       XK_j,            focusstack,     {.i = +1}            }, /* Focus next in stack */
+	{ MODKEY,                       XK_k,            focusstack,     {.i = -1}            }, /* Focus previous in stack */
+	{ MODKEY|ShiftMask,             XK_j,            rotatestack,    {.i = +1}            }, /* Rotate stack next*/
+	{ MODKEY|ShiftMask,             XK_k,            rotatestack,    {.i = -1}            }, /* Rotate stack previous */
+	{ MODKEY,                       XK_bracketright, incnmaster,     {.i = +1}            }, /* Increase master stack */
+	{ MODKEY,                       XK_bracketleft,  incnmaster,     {.i = -1}            }, /* Decrease master stack */
+	{ MODKEY,                       XK_h,            setmfact,       {.f = -0.05}         }, /* Widen to left */
+	{ MODKEY,                       XK_l,            setmfact,       {.f = +0.05}         }, /* Widen to right */
+	{ MODKEY|ShiftMask,             XK_Return,       zoom,           {0}                  }, /* IDK */
+	{ MODKEY,                       XK_Tab,          view,           {0}                  }, /* Switch to last tag */
+	{ MODKEY|ShiftMask,             XK_BackSpace,    killclient,     {0}                  }, /* Kill active Window */
+	{ MODKEY|ControlMask,           XK_space,        setlayout,      {0}                  }, /* Toggle monocle layout */
+	{ MODKEY|ShiftMask,             XK_space,        togglefloating, {0}                  }, /* Toggle floating layout */
+	{ MODKEY,                       XK_0,            view,           {.ui = ~0}           }, /* View all tags */
+	{ MODKEY|ShiftMask,             XK_0,            tag,            {.ui = ~0}           }, /* Tag window in all tags */
+	{ MODKEY,                       XK_comma,        focusmon,       {.i = -1}            }, /* Focus previous monitor */
+	{ MODKEY,                       XK_period,       focusmon,       {.i = +1}            }, /* Focus next monitor */
+	{ MODKEY|ShiftMask,             XK_comma,        tagmon,         {.i = -1}            }, /* Move window to previous monitor */
+	{ MODKEY|ShiftMask,             XK_period,       tagmon,         {.i = +1}            }, /* Move window to next monitor */
+	{ MODKEY|ShiftMask|ControlMask, XK_k,            viewnext,       {0}                  }, /* Move to next tag */
+	{ MODKEY|ShiftMask|ControlMask, XK_j,            viewprev,       {0}                  }, /* Move to previous tag */
+	{ MODKEY|ShiftMask|ControlMask, XK_l,            tagtonext,      {0}                  }, /* Move window to next tag */
+	{ MODKEY|ShiftMask|ControlMask, XK_h,            tagtoprev,      {0}                  }, /* Move window to previous tag */
 
 	/* vanity gaps */
-	{ MODKEY|Mod1Mask,              XK_u,      incrgaps,       {.i = +1 } },
-	{ MODKEY|Mod1Mask|ShiftMask,    XK_u,      incrgaps,       {.i = -1 } },
-	{ MODKEY|Mod1Mask,              XK_i,      incrigaps,      {.i = +1 } },
-	{ MODKEY|Mod1Mask|ShiftMask,    XK_i,      incrigaps,      {.i = -1 } },
-	{ MODKEY|Mod1Mask,              XK_o,      incrogaps,      {.i = +1 } },
-	{ MODKEY|Mod1Mask|ShiftMask,    XK_o,      incrogaps,      {.i = -1 } },
-	{ MODKEY|Mod1Mask,              XK_6,      incrihgaps,     {.i = +1 } },
-	{ MODKEY|Mod1Mask|ShiftMask,    XK_6,      incrihgaps,     {.i = -1 } },
-	{ MODKEY|Mod1Mask,              XK_7,      incrivgaps,     {.i = +1 } },
-	{ MODKEY|Mod1Mask|ShiftMask,    XK_7,      incrivgaps,     {.i = -1 } },
-	{ MODKEY|Mod1Mask,              XK_8,      incrohgaps,     {.i = +1 } },
-	{ MODKEY|Mod1Mask|ShiftMask,    XK_8,      incrohgaps,     {.i = -1 } },
-	{ MODKEY|Mod1Mask,              XK_9,      incrovgaps,     {.i = +1 } },
-	{ MODKEY|Mod1Mask|ShiftMask,    XK_9,      incrovgaps,     {.i = -1 } },
-	{ MODKEY|Mod1Mask,              XK_0,      togglegaps,     {0} },
-	{ MODKEY|Mod1Mask|ShiftMask,    XK_0,      defaultgaps,    {0} },
+	/* { MODKEY|Mod1Mask,              XK_u,      incrgaps,       {.i = +1 } }, */
+	/* { MODKEY|Mod1Mask|ShiftMask,    XK_u,      incrgaps,       {.i = -1 } }, */
+	/* { MODKEY|Mod1Mask,              XK_i,      incrigaps,      {.i = +1 } }, */
+	/* { MODKEY|Mod1Mask|ShiftMask,    XK_i,      incrigaps,      {.i = -1 } }, */
+	/* { MODKEY|Mod1Mask,              XK_o,      incrogaps,      {.i = +1 } }, */
+	/* { MODKEY|Mod1Mask|ShiftMask,    XK_o,      incrogaps,      {.i = -1 } }, */
+	/* { MODKEY|Mod1Mask,              XK_6,      incrihgaps,     {.i = +1 } }, */
+	/* { MODKEY|Mod1Mask|ShiftMask,    XK_6,      incrihgaps,     {.i = -1 } }, */
+	/* { MODKEY|Mod1Mask,              XK_7,      incrivgaps,     {.i = +1 } }, */
+	/* { MODKEY|Mod1Mask|ShiftMask,    XK_7,      incrivgaps,     {.i = -1 } }, */
+	/* { MODKEY|Mod1Mask,              XK_8,      incrohgaps,     {.i = +1 } }, */
+	/* { MODKEY|Mod1Mask|ShiftMask,    XK_8,      incrohgaps,     {.i = -1 } }, */
+	/* { MODKEY|Mod1Mask,              XK_9,      incrovgaps,     {.i = +1 } }, */
+	/* { MODKEY|Mod1Mask|ShiftMask,    XK_9,      incrovgaps,     {.i = -1 } }, */
+	/* { MODKEY|Mod1Mask,              XK_0,      togglegaps,     {0} }, */
+	/* { MODKEY|Mod1Mask|ShiftMask,    XK_0,      defaultgaps,    {0} }, */
 
-	{ MODKEY|ShiftMask|ControlMask, XK_k,      viewnext,       {0} },
-	{ MODKEY|ShiftMask|ControlMask, XK_j,      viewprev,       {0} },
-	{ MODKEY|ShiftMask|ControlMask, XK_l,      tagtonext,      {0} },
-	{ MODKEY|ShiftMask|ControlMask, XK_h,      tagtoprev,      {0} },
+	/* { MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} }, */
+	/* { MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} }, */
+	/* { MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} }, */
 
 	/* function keys */
-	{ 0,                            XF86XK_AudioRaiseVolume, spawn, {.v = volumeup } },
-	{ 0,                            XF86XK_AudioLowerVolume, spawn, {.v = volumedown } },
-	{ 0,                            XF86XK_AudioMute,        spawn, {.v = volumemute } },
-	{ 0,                            XF86XK_AudioMicMute,     spawn, {.v = micmute } },
-	{ MODKEY,                       XK_F5,                   spawn, {.v = micmute } },
-	{ MODKEY,                       XK_F6,                   spawn, {.v = dmenuaudio } },
-	{ 0,                            XF86XK_AudioPlay,        spawn, {.v = dbustogg } },
-	{ 0,                            XF86XK_AudioStop,        spawn, {.v = dbusstop } },
-	{ 0,                            XF86XK_AudioPause,       spawn, {.v = dbusstop } },
-	{ 0,                            XF86XK_AudioNext,        spawn, {.v = dbusnext } },
-	{ 0,                            XF86XK_AudioPrev,        spawn, {.v = dbusprev } },
+	{ 0,                            XF86XK_AudioRaiseVolume,  spawnbin, {.v = volumeup}   }, /* Increase volume */
+	{ 0,                            XF86XK_AudioLowerVolume,  spawnbin, {.v = volumedown} }, /* Decrease volume */
+	{ 0,                            XF86XK_AudioMute,         spawnbin, {.v = volumemute} }, /* Mute audio */
+	{ 0,                            XF86XK_AudioMicMute,      spawnbin, {.v = micmute}    }, /* Mute microphone */
+	{ MODKEY,                       XK_F5,                    spawnbin, {.v = micmute}    }, /* Mute microphone */
+	{ MODKEY,                       XK_F6,                    spawn,    {.v = dmenuaudio} }, /* Spawn audio source menu */
+	{ MODKEY,                       XK_F7,                    spawn,    {.v = xrandrset}  }, /* Spawn monitor menu */
+	{ MODKEY,                       XK_F1,                    spawn,    {.v = dwmkeymenu} }, /* Spawn key menu */
+	{ 0,                            XF86XK_AudioPlay,         spawnbin, {.v = dbustogg}   }, /* Toggle media player */
+	{ 0,                            XF86XK_AudioStop,         spawnbin, {.v = dbusstop}   }, /* Toggle media player */
+	{ 0,                            XF86XK_AudioPause,        spawnbin, {.v = dbusstop}   }, /* Stop media player */
+	{ 0,                            XF86XK_AudioNext,         spawnbin, {.v = dbusnext}   }, /* Media player next */
+	{ 0,                            XF86XK_AudioPrev,         spawnbin, {.v = dbusprev}   }, /* Media player previous */
+	{ 0,                            XF86XK_MonBrightnessUp,   spawn,    {.v = brightup}   }, /* Brightness up */
+	{ 0,                            XF86XK_MonBrightnessDown, spawn,    {.v = brightdown} }, /* Brightness down */
+	{ 0,                            XK_Print,                 spawnbin, {.v = screenshot} }, /* Take screenshot */
+	{ MODKEY|ShiftMask,             XK_q,                     quit,     {0}               }, /* Quit dwm */
+	{ MODKEY|ControlMask|ShiftMask, XK_q,                     quit,     {1}            }, /* Restart dwm */
 
-	{ 0,                            XF86XK_MonBrightnessUp,  spawn, {.v = brightup } },
-	{ 0,                            XF86XK_MonBrightnessDown,spawn, {.v = brightdown } },
-	{ 0,                            XK_Print,                spawn, {.v = screenshot } },
-
-	TAGKEYS(                        XK_1,                         0)
-	TAGKEYS(                        XK_2,                         1)
-	TAGKEYS(                        XK_3,                         2)
-	TAGKEYS(                        XK_4,                         3)
-	TAGKEYS(                        XK_5,                         4)
-	TAGKEYS(                        XK_6,                         5)
-	TAGKEYS(                        XK_7,                         6)
-	TAGKEYS(                        XK_8,                         7)
-	TAGKEYS(                        XK_9,                         8)
-	{ MODKEY|ShiftMask,             XK_q,         quit,           {0} },
-	{ MODKEY|ControlMask|ShiftMask, XK_q,         quit,           {1} },
+	TAGKEYS(                        XK_1,                         0) /* General tags */
+	TAGKEYS(                        XK_2,                         1) /* General tags */
+	TAGKEYS(                        XK_3,                         2) /* General tags */
+	TAGKEYS(                        XK_4,                         3) /* General tags */
+	TAGKEYS(                        XK_5,                         4) /* General tags */
+	TAGKEYS(                        XK_6,                         5) /* General tags */
+	TAGKEYS(                        XK_7,                         6) /* General tags */
+	TAGKEYS(                        XK_8,                         7) /* General tags */
+	TAGKEYS(                        XK_9,                         8) /* General tags */
 };
 
 /* button definitions */
@@ -296,4 +296,3 @@ static const Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
-

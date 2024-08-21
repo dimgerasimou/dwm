@@ -291,6 +291,7 @@ static void sigstatusbar(const Arg *arg);
 static int solitary(Client *c);
 static Monitor *statustomon(Monitor *m);
 static void spawn(const Arg *arg);
+static void spawnbin(const Arg *arg);
 static Monitor *systraytomon(Monitor *m);
 static void swallow(Client *p, Client *c);
 static Client *swallowingclient(Window w);
@@ -1556,8 +1557,22 @@ layoutmenu(const Arg *arg) {
 	FILE *p;
 	char c[3], *s;
 	int i;
+	char *path;
+	char *home;
+
 	if (hidelayout)
 		return;
+
+	if (!(home = getenv("HOME")))
+		return;
+	
+	path = ecalloc(1, strlen(home) + strlen(binpath) + strlen(layoutmenu_cmd) + 3);
+
+	if (sprintf(path, "%s/%s/%s", home, binpath, layoutmenu_cmd) <= 0) {
+		free(path);
+		return;
+	}
+
 	if (!(p = popen(layoutmenu_cmd, "r")))
 		 return;
 	s = fgets(c, sizeof(c), p);
@@ -1568,6 +1583,7 @@ layoutmenu(const Arg *arg) {
 
 	i = atoi(c);
 	setlayout(&((Arg) { .v = &layouts[i] }));
+	free(path);
 }
 
 void
@@ -2066,7 +2082,7 @@ restoresession(void)
 				break;
 			}
 		}
-    }
+	}
 
 	for (Client *c = selmon->clients; c ; c = c->next) { // refocus on windows
 		focus(c);
@@ -2167,13 +2183,13 @@ runautostart(void)
 	char *path;
 	char *home;
 
-	if ((home = getenv("HOME")) == NULL)
+	if (!(home = getenv("HOME")))
 		/* this is almost impossible */
 		return;
 	
-	path = ecalloc(1, strlen(home) + strlen(autostartpath) + strlen(autostartsh) + 3);
+	path = ecalloc(1, strlen(home) + strlen(binpath) + strlen(autostartsh) + 3);
 
-	if (sprintf(path, "%s/%s/%s", home, autostartpath, autostartsh) <= 0) {
+	if (sprintf(path, "%s/%s/%s", home, binpath, autostartsh) <= 0) {
 		free(path);
 		return;
 	}
@@ -2532,6 +2548,40 @@ spawn(const Arg *arg)
 		execvp(((char **)arg->v)[0], (char **)arg->v);
 		die("dwm: execvp '%s' failed:", ((char **)arg->v)[0]);
 	}
+}
+
+void
+spawnbin(const Arg *arg)
+{
+	struct sigaction sa;
+	char *path;
+	char *home;
+
+	if (!(home = getenv("HOME")))
+		return;
+	
+	path = ecalloc(1, strlen(home) + strlen(binpath) + strlen(((char**) arg->v)[0]) + 3);
+
+	if (sprintf(path, "%s/%s/%s", home, binpath, ((char**) arg->v)[0]) <= 0) {
+		free(path);
+		return;
+	}
+
+	selmon->tagset[selmon->seltags] &= ~scratchtag;
+	if (fork() == 0) {
+		if (dpy)
+			close(ConnectionNumber(dpy));
+		setsid();
+
+		sigemptyset(&sa.sa_mask);
+		sa.sa_flags = 0;
+		sa.sa_handler = SIG_DFL;
+		sigaction(SIGCHLD, &sa, NULL);
+
+		execv(path, (char **)arg->v);
+		die("dwm: execv '%s' failed:", path);
+	}
+	free(path);
 }
 
 Monitor *
@@ -3348,18 +3398,18 @@ winpid(Window w)
 #endif /* __linux__ */
 
 #ifdef __OpenBSD__
-        Atom type;
-        int format;
-        unsigned long len, bytes;
-        unsigned char *prop;
-        pid_t ret;
+	Atom type;
+	int format;
+	unsigned long len, bytes;
+	unsigned char *prop;
+	pid_t ret;
 
-        if (XGetWindowProperty(dpy, w, XInternAtom(dpy, "_NET_WM_PID", 0), 0, 1, False, AnyPropertyType, &type, &format, &len, &bytes, &prop) != Success || !prop)
-               return 0;
+	if (XGetWindowProperty(dpy, w, XInternAtom(dpy, "_NET_WM_PID", 0), 0, 1, False, AnyPropertyType, &type, &format, &len, &bytes, &prop) != Success || !prop)
+		return 0;
 
-        ret = *(pid_t*)prop;
-        XFree(prop);
-        result = ret;
+	ret = *(pid_t*)prop;
+	XFree(prop);
+	result = ret;
 
 #endif /* __OpenBSD__ */
 	return result;
@@ -3465,7 +3515,7 @@ main(int argc, char *argv[])
 	if (!(dpy = XOpenDisplay(NULL)))
 		die("dwm: cannot open display");
 	if (!(xcon = XGetXCBConnection(dpy)))
-		die("dwm: cannot get xcb connection\n");		
+		die("dwm: cannot get xcb connection\n");
 	checkotherwm();
 	XrmInitialize();
 	load_xresources();
