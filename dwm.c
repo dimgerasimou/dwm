@@ -1573,8 +1573,9 @@ layoutmenu(const Arg *arg) {
 		return;
 	}
 
-	if (!(p = popen(layoutmenu_cmd, "r")))
+	if (!(p = popen(path, "r")))
 		 return;
+	
 	s = fgets(c, sizeof(c), p);
 	pclose(p);
 
