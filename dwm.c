@@ -2185,7 +2185,6 @@ runautostart(void)
 	char *home;
 
 	if (!(home = getenv("HOME")))
-		/* this is almost impossible */
 		return;
 	
 	path = ecalloc(1, strlen(home) + strlen(binpath) + strlen(autostartsh) + 3);

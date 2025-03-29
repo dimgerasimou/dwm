@@ -42,9 +42,7 @@ static const unsigned int warpwin   = 1;     /* warp cursor to selected window *
 /* fonts and colors */
 static const char *fonts[] = {
 	"mono:size=11",
-	// "FiraCode Nerd Font:style=Regular:size=11",
-	// "Font Awesome 6 Free:style=Regular:size=11",
-	// "Noto Sans:style=Regular:size=11",
+	"Font Awesome 6 Free:style=Regular:size=11",
 };
 
 static char normbgcolor[]           = "#323232";
@@ -146,7 +144,7 @@ static char *colors[][3] = {
 /* commands */
 static const char scratchpadname[] = "scratchpad";
 static const char layoutmenu_cmd[] = "layoutmenu";
-static const char binpath[]        = ".local/bin/dwm";
+static const char binpath[]        = ".config/dwm";
 
 /* application launch */
 static const char *dmenucmd[]      = { "dmenu_appmenu", "-nn", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };

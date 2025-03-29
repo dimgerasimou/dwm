@@ -54,6 +54,8 @@ See also [my binaries](https://github.com/dimgerasimou/binaries 'binaries')
 
 The configuration of dwm is done by creating a custom config.h and (re)compiling the source code.
 
+A script named autostart.sh can be defined with all commands needed at startup.
+
 ## Examples
 
 ![Desktop](resources/Desktop.png)
