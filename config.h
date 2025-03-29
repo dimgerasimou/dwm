@@ -144,7 +144,8 @@ static char *colors[][3] = {
 /* commands */
 static const char scratchpadname[] = "scratchpad";
 static const char layoutmenu_cmd[] = "layoutmenu";
-static const char binpath[]        = ".config/dwm";
+static const char binpath[]        = ".local/bin/dwm";
+static const char autostartpath[]  = ".config/dwm/autostart.sh";
 
 /* application launch */
 static const char *dmenucmd[]      = { "dmenu_appmenu", "-nn", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };

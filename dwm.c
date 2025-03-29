@@ -338,7 +338,6 @@ static void zoom(const Arg *arg);
 
 /* variables */
 static Systray *systray = NULL;
-static const char autostartsh[] = "autostart.sh";
 static const char broken[] = "broken";
 static char stext[1024];
 static int statussig;
@@ -2187,9 +2186,9 @@ runautostart(void)
 	if (!(home = getenv("HOME")))
 		return;
 	
-	path = ecalloc(1, strlen(home) + strlen(binpath) + strlen(autostartsh) + 3);
+	path = ecalloc(1, strlen(home) + strlen(autostartpath) + 2);
 
-	if (sprintf(path, "%s/%s/%s", home, binpath, autostartsh) <= 0) {
+	if (sprintf(path, "%s/%s", home, autostartpath) <= 0) {
 		free(path);
 		return;
 	}
