@@ -41,8 +41,10 @@ static const unsigned int warpwin   = 1;     /* warp cursor to selected window *
 
 /* fonts and colors */
 static const char *fonts[] = {
-	"FiraCode Nerd Font:style=Regular:size=11",
-	"Font Awesome 6 Free:style=Regular:size=11",
+	"mono:size=11",
+	// "FiraCode Nerd Font:style=Regular:size=11",
+	// "Font Awesome 6 Free:style=Regular:size=11",
+	// "Noto Sans:style=Regular:size=11",
 };
 
 static char normbgcolor[]           = "#323232";
@@ -65,10 +67,9 @@ static const Rule rules[] = {
 	 */
 	/* class         instance    title           tags mask     isfloating    isterminal    noswallow    monitor */
 	{ "firefox",     NULL,       NULL,           0,            0,            0,            0,           -1 },
+	{ "zen-browser", NULL,       NULL,           0,            0,            0,            0,           -1 },
 	{ "thunderbird", NULL,       NULL,           0,            0,            0,            -1,          -1 },
-	{ "Alacritty",   NULL,       NULL,           0,            0,            1,            0,           -1 },	
 	{ "St",          NULL,       NULL,           0,            0,            1,            0,           -1 },
-	{ "vscodium",    NULL,       NULL,           0,            0,            0,            0,           -1 },
 	{ NULL,          NULL,       "Event Tester", 0,            0,            0,            1,           -1 }, /* xev */
 };
 
@@ -150,11 +151,11 @@ static const char binpath[]        = ".local/bin/dwm";
 /* application launch */
 static const char *dmenucmd[]      = { "dmenu_appmenu", "-nn", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
 static const char *dmenuaudio[]    = { "sh", "-c", "$HOME/.local/bin/dmenu/dmenu-audio-source-select", NULL};
-static const char *clipcmd[]       = { "clipmenu", "-a", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
+static const char *clipcmd[]       = { "clipmenu", "-a", "-c", "-i", "-h", "12", "-l", "20", NULL };
 static const char *dmenuall[]      = { "dmenu_run", "-c", "-i", "-n", "-h", "12", "-l", "20", NULL };
 static const char *xrandrset[]     = { "xrandr-setup", "-s", "-c", "-i", "-nn", "-h", "12", "-l", "5", "-p", "Select XRandR layout:", NULL};
 static const char *termcmd[]       = { "st", NULL };
-static const char *browsercmd[]    = { "firefox", NULL };
+static const char *browsercmd[]    = { "zen-browser", NULL };
 static const char *emailcmd[]      = { "thunderbird", NULL };
 static const char *explrcmd[]      = { "pcmanfm", NULL };
 static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34", NULL };
