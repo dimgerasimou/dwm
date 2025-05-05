@@ -2187,7 +2187,7 @@ runautostart(void)
 	if (!(home = getenv("HOME")))
 		return;
 	
-	path = ecalloc(1, strlen(home) + strlen(binpath) + strlen(autostartsh) + 3);
+	path = ecalloc(1, strlen(home) + strlen(binpath) + strlen(autostartsh) + 5);
 
 	if (sprintf(path, "%s/%s/%s", home, binpath, autostartsh) <= 0) {
 		free(path);
