@@ -16,6 +16,9 @@ ${OBJ}: config.h config.mk
 dwm: ${OBJ}
 	${CC} -o $@ ${OBJ} ${LDFLAGS}
 
+config.h:
+	cp config.def.h config.h
+
 clean:
 	@rm -f dwm ${OBJ} dwm-${VERSION}.tar.gz
 

@@ -41,8 +41,8 @@ static const unsigned int warpwin   = 1;     /* warp cursor to selected window *
 
 /* fonts and colors */
 static const char *fonts[] = {
-	"mono:size=11",
-	"Font Awesome 6 Free:style=Regular:size=11",
+	"Roboto Mono:size=11",
+	"JetBrainsMono Nerd Font Propo:size=11",
 };
 
 static char normbgcolor[]           = "#323232";
