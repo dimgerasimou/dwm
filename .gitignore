@@ -1,5 +1,2 @@
-dwm
-*.o
-compile_commands.json
-.cache
+build/
 config.h

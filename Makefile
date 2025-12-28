@@ -3,43 +3,64 @@
 
 include config.mk
 
+SRCDIR   = src
+INCDIR   = $(SRCDIR)/inc
+BUILDDIR = build
+OBJDIR   = $(BUILDDIR)/obj
+BINDIR   = $(BUILDDIR)/bin
+DOCDIR   = docs
+
 SRC = drw.c dwm.c util.c
-OBJ = ${SRC:.c=.o}
+OBJ = $(SRC:%.c=$(OBJDIR)/%.o)
 
-all: dwm
+BIN = $(BINDIR)/dwm
 
-.c.o:
-	${CC} -c ${CFLAGS} $<
+CPPFLAGS += -I$(INCDIR) -I.
 
-${OBJ}: config.h config.mk
+# Pretty Output
+ECHO := /bin/echo -e
+COLOR_RESET := \033[0m
+COLOR_GREEN := \033[1;32m
+COLOR_YELLOW := \033[1;33m
+COLOR_BLUE := \033[1;34m
+COLOR_MAGENTA := \033[1;35m
+COLOR_CYAN := \033[1;36m
+
+all: $(BIN)
+
+$(OBJDIR) $(BINDIR):
+	@mkdir -p $@
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
+	@$(ECHO) "$(COLOR_BLUE)Compiling:$(COLOR_RESET) $<"
+	@$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
+
+$(OBJ): config.h config.mk
 
 config.h:
-	cp config.def.h $@
+	@$(ECHO) "$(COLOR_MAGENTA)Using default config:$(COLOR_RESET) $@"
+	@cp config.def.h $@
 
-dwm: ${OBJ}
-	${CC} -o $@ ${OBJ} ${LDFLAGS}
+$(BIN): $(OBJ) | $(BINDIR)
+	@$(ECHO) "$(COLOR_GREEN)Linking:$(COLOR_RESET) $@"
+	@$(CC) -o $@ $(OBJ) $(LDFLAGS)
 
 clean:
-	rm -f dwm ${OBJ} dwm-${VERSION}.tar.gz
-
-dist: clean
-	mkdir -p dwm-${VERSION}
-	cp -R LICENSE Makefile README config.def.h config.mk\
-		dwm.1 drw.h util.h ${SRC} dwm.png transient.c dwm-${VERSION}
-	tar -cf dwm-${VERSION}.tar dwm-${VERSION}
-	gzip dwm-${VERSION}.tar
-	rm -rf dwm-${VERSION}
+	@$(ECHO) "$(COLOR_YELLOW)Cleaning...$(COLOR_RESET)"
+	@rm -rf $(BUILDDIR)
 
 install: all
-	mkdir -p ${DESTDIR}${PREFIX}/bin
-	cp -f dwm ${DESTDIR}${PREFIX}/bin
-	chmod 755 ${DESTDIR}${PREFIX}/bin/dwm
-	mkdir -p ${DESTDIR}${MANPREFIX}/man1
-	sed "s/VERSION/${VERSION}/g" < dwm.1 > ${DESTDIR}${MANPREFIX}/man1/dwm.1
-	chmod 644 ${DESTDIR}${MANPREFIX}/man1/dwm.1
+	@$(ECHO) "$(COLOR_CYAN)Installing dwm at:$(COLOR_RESET) $(DESTDIR)$(PREFIX)/bin/dwm"
+	@mkdir -p $(DESTDIR)$(PREFIX)/bin
+	@cp -f $(BIN) $(DESTDIR)$(PREFIX)/bin/dwm
+	@chmod 755 $(DESTDIR)$(PREFIX)/bin/dwm
+	@mkdir -p $(DESTDIR)$(MANPREFIX)/man1
+	@sed "s/VERSION/$(VERSION)/g" < $(DOCDIR)/dwm.1 > $(DESTDIR)$(MANPREFIX)/man1/dwm.1
+	@chmod 644 $(DESTDIR)$(MANPREFIX)/man1/dwm.1
 
 uninstall:
-	rm -f ${DESTDIR}${PREFIX}/bin/dwm\
-		${DESTDIR}${MANPREFIX}/man1/dwm.1
+	@$(ECHO) "$(COLOR_MAGENTA)Uninstalling dwm from:$(COLOR_RESET) $(DESTDIR)$(PREFIX)/bin/dwm"
+	@rm -f $(DESTDIR)$(PREFIX)/bin/dwm $(DESTDIR)$(MANPREFIX)/man1/dwm.1
 
-.PHONY: all clean dist install uninstall
+.PHONY: all clean install uninstall
+
