@@ -39,6 +39,7 @@
 #include <X11/extensions/Xinerama.h>
 #endif /* XINERAMA */
 #include <X11/Xft/Xft.h>
+#include <X11/extensions/Xrender.h>
 
 #include "drw.h"
 #include "util.h"
@@ -161,7 +162,19 @@ struct Systray {
 	Client *icons;
 };
 
+typedef struct PixelCache PixelCache;
+struct PixelCache {
+	Visual *visual;
+	Colormap cmap;
+	int depth;
+	unsigned int alpha;
+	char hex[16];
+	unsigned long pixel;
+	PixelCache *next;
+};
+
 /* function declarations */
+static unsigned long allocpixel(Window w, const char *hex, unsigned int alpha);
 static void applyrules(Client *c);
 static int applysizehints(Client *c, int *x, int *y, int *w, int *h, int interact);
 static void arrange(Monitor *m);
@@ -221,6 +234,7 @@ static void run(void);
 static void scan(void);
 static int sendevent(Window w, Atom proto, int m, long d0, long d1, long d2, long d3, long d4);
 static void sendmon(Client *c, Monitor *m);
+static void setclientborder(Client *c, int focused);
 static void setclientstate(Client *c, long state);
 static void setclienttagprop(Client *c);
 static void setfocus(Client *c);
@@ -309,6 +323,7 @@ static int useargb = 0;
 static Visual *visual;
 static int depth;
 static Colormap cmap;
+static PixelCache *pixelcache = NULL;
 
 /* configuration, allows nested code to access above variables */
 #include "config.h"
@@ -317,6 +332,60 @@ static Colormap cmap;
 struct NumTags { char limitexceeded[LENGTH(tags) > 31 ? -1 : 1]; };
 
 /* function implementations */
+
+static unsigned long
+allocpixel(Window w, const char *hex, unsigned int alpha)
+{
+	XWindowAttributes wa;
+	XftColor base, out;
+	XRenderColor r;
+	PixelCache *p;
+
+	if (!hex || !*hex)
+		return 0;
+
+	if (!XGetWindowAttributes(dpy, w, &wa))
+		return 0;
+
+	if (wa.colormap == None)
+		wa.colormap = DefaultColormap(dpy, screen);
+
+	for (p = pixelcache; p; p = p->next)
+		if (p->visual == wa.visual && p->cmap == wa.colormap && p->depth == wa.depth
+		&& p->alpha == alpha && strcmp(p->hex, hex) == 0)
+			return p->pixel;
+
+	if (!XftColorAllocName(dpy, wa.visual, wa.colormap, hex, &base))
+		return 0;
+
+	if (wa.depth == 32) {
+		/* Premultiply RGB by alpha (XRender expects premultiplied ARGB) */
+		r = base.color;
+		r.alpha = alpha * 0x101; /* 0..255 -> 0..65535 */
+		r.red   = (r.red   * alpha) / 255;
+		r.green = (r.green * alpha) / 255;
+		r.blue  = (r.blue  * alpha) / 255;
+
+		XftColorFree(dpy, wa.visual, wa.colormap, &base);
+		if (!XftColorAllocValue(dpy, wa.visual, wa.colormap, &r, &out))
+			return 0;
+	} else {
+		out = base;
+	}
+
+	p = ecalloc(1, sizeof(PixelCache));
+	p->visual = wa.visual;
+	p->cmap = wa.colormap;
+	p->depth = wa.depth;
+	p->alpha = alpha;
+	snprintf(p->hex, sizeof(p->hex), "%s", hex);
+	p->pixel = out.pixel;
+	p->next = pixelcache;
+	pixelcache = p;
+
+	return out.pixel;
+}
+
 void
 applyrules(Client *c)
 {
@@ -913,7 +982,7 @@ focus(Client *c)
 		detachstack(c);
 		attachstack(c);
 		grabbuttons(c, 1);
-		XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColBorder].pixel);
+		setclientborder(c, 1);
 		setfocus(c);
 	} else {
 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
@@ -1194,7 +1263,7 @@ manage(Window w, XWindowAttributes *wa)
 
 	wc.border_width = c->bw;
 	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
-	XSetWindowBorder(dpy, w, scheme[SchemeNorm][ColBorder].pixel);
+	setclientborder(c, 0);
 	configure(c); /* propagates border_width, if size doesn't change */
 	updatewindowtype(c);
 	updatesizehints(c);
@@ -1639,6 +1708,37 @@ sendmon(Client *c, Monitor *m)
 	arrange(NULL);
 }
 
+static void
+setclientborder(Client *c, int focused)
+{
+	XWindowAttributes wa;
+	XRenderPictFormat *fmt;
+	const char *hex;
+	unsigned long px, mask;
+
+	if (!c)
+		return;
+
+	hex = focused ? colors[SchemeSel][ColBorder]
+	              : colors[SchemeNorm][ColBorder];
+
+	px = allocpixel(c->win, hex, OPAQUE);
+	if (!px)
+		return;
+
+	/* Force opaque alpha for ARGB windows using XRender's (shift,mask) */
+	if (OPAQUE == OPAQUE && XGetWindowAttributes(dpy, c->win, &wa) && wa.depth == 32) {
+		fmt = XRenderFindVisualFormat(dpy, wa.visual);
+		if (fmt && fmt->type == PictTypeDirect && fmt->direct.alphaMask) {
+			mask = (unsigned long)fmt->direct.alphaMask;
+			px &= ~(mask << fmt->direct.alpha);   /* clear alpha field */
+			px |=  (mask << fmt->direct.alpha);   /* set alpha to all 1s */
+		}
+	}
+
+	XSetWindowBorder(dpy, c->win, px);
+}
+
 void
 setclientstate(Client *c, long state)
 {
@@ -1825,7 +1925,7 @@ setup(void)
 	cursor[CurMove] = drw_cur_create(drw, XC_fleur);
 	/* init appearance */
 	scheme = ecalloc(LENGTH(colors), sizeof(Clr *));
-	unsigned int alphas[] = {OPAQUE, baralpha, borderalpha};
+	unsigned int alphas[] = {OPAQUE, baralpha, OPAQUE};
 	for (i = 0; i < LENGTH(colors); i++)
 		scheme[i] = drw_scm_create(drw, colors[i], alphas, 3);
 	/* init system tray */
@@ -2042,7 +2142,7 @@ unfocus(Client *c, int setfocus)
 	if (!c)
 		return;
 	grabbuttons(c, 0);
-	XSetWindowBorder(dpy, c->win, scheme[SchemeNorm][ColBorder].pixel);
+	setclientborder(selmon->sel, 0);
 	if (setfocus) {
 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
 		XDeleteProperty(dpy, root, netatom[NetActiveWindow]);
@@ -2405,10 +2505,8 @@ updatesystray(void)
 		}
 	}
 	for (w = 0, i = systray->icons; i; i = i->next) {
-		/* make sure the background color stays the same */
-		wa.background_pixel  = scheme[SchemeNorm][ColBg].pixel;
-		// Apply systray alpha to icon backgrounds too
-		wa.background_pixel = (wa.background_pixel & 0x00ffffffU) | (systrayalpha << 24);
+		/* keep tray icon background consistent (alpha-aware, per icon visual) */
+		wa.background_pixel = allocpixel(i->win, colors[SchemeNorm][ColBg], systrayalpha);
 		XChangeWindowAttributes(dpy, i->win, CWBackPixel, &wa);
 		XMapRaised(dpy, i->win);
 		w += systrayspacing;
@@ -2426,11 +2524,24 @@ updatesystray(void)
 	XConfigureWindow(dpy, systray->win, CWX|CWY|CWWidth|CWHeight|CWSibling|CWStackMode, &wc);
 	XMapWindow(dpy, systray->win);
 	XMapSubwindows(dpy, systray->win);
-	/* redraw background */
-	XftDraw *d = XftDrawCreate(dpy, systray->win, visual, cmap);
-	if (d) {
-		XftDrawRect(d, &scheme[SchemeNorm][ColBg], 0, 0, w, bh);
-		XftDrawDestroy(d);
+	/* redraw background (alpha-aware) */
+	{
+		XftDraw *d = XftDrawCreate(dpy, systray->win, visual, cmap);
+		if (d) {
+			Clr bg = scheme[SchemeNorm][ColBg];
+			if (useargb && systrayalpha != OPAQUE) {
+				XRenderColor rc = bg.color;
+				unsigned int a = systrayalpha;
+				rc.alpha = a * 0x101;
+				rc.red   = (rc.red   * a) / 255;
+				rc.green = (rc.green * a) / 255;
+				rc.blue  = (rc.blue  * a) / 255;
+				/* allocate a temp bg color with systray alpha */
+				XftColorAllocValue(dpy, visual, cmap, &rc, &bg);
+			}
+			XftDrawRect(d, &bg, 0, 0, w, bh);
+			XftDrawDestroy(d);
+		}
 	}
 	XSync(dpy, False);
 }
