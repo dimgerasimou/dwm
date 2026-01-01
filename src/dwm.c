@@ -668,16 +668,18 @@ clientmessage(XEvent *e)
 			updatesystrayicongeom(c, wa.width, wa.height);
 			XAddToSaveSet(dpy, c->win);
 			XSelectInput(dpy, c->win, StructureNotifyMask | PropertyChangeMask | ResizeRedirectMask);
-			XReparentWindow(dpy, c->win, systray->win, 0, 0);
-			/* use parents background color with alpha */
-			swa.background_pixel  = scheme[SchemeSystray][ColBg].pixel;
-			swa.border_pixel = 0;
-			XChangeWindowAttributes(dpy, c->win, CWBackPixel | CWBorderPixel, &swa);
-			sendevent(c->win, netatom[Xembed], StructureNotifyMask, CurrentTime, XEMBED_EMBEDDED_NOTIFY, 0, systray->win, XEMBED_EMBEDDED_VERSION);
-			/* FIXME not sure if I have to send these events, too */
-			sendevent(c->win, netatom[Xembed], StructureNotifyMask, CurrentTime, XEMBED_FOCUS_IN, 0, systray->win, XEMBED_EMBEDDED_VERSION);
-			sendevent(c->win, netatom[Xembed], StructureNotifyMask, CurrentTime, XEMBED_WINDOW_ACTIVATE, 0, systray->win, XEMBED_EMBEDDED_VERSION);
-			sendevent(c->win, netatom[Xembed], StructureNotifyMask, CurrentTime, XEMBED_MODALITY_ON, 0, systray->win, XEMBED_EMBEDDED_VERSION);
+
+			/* keep tray icons out of normal window management */
+			if (!wa.override_redirect) {
+				swa.override_redirect = True;
+				XChangeWindowAttributes(dpy, c->win, CWOverrideRedirect, &swa);
+			}
+
+			/* do not reparent: keep icon a root window so its alpha blends against the tray/bar */
+			/* XReparentWindow(dpy, c->win, systray->win, 0, 0); */
+
+			sendevent(c->win, netatom[Xembed], StructureNotifyMask, CurrentTime,
+					XEMBED_EMBEDDED_NOTIFY, 0, systray->win, XEMBED_EMBEDDED_VERSION);
 			XSync(dpy, False);
 			resizebarwin(selmon);
 			updatesystray();
@@ -1068,8 +1070,12 @@ getsystraywidth(void)
 {
 	unsigned int w = 0;
 	Client *i;
-	if(showsystray)
-		for(i = systray->icons; i; w += i->w + systrayspacing, i = i->next) ;
+
+	if (showsystray)
+		for (i = systray->icons; i; i = i->next)
+			if (i->tags)
+				w += i->w + systrayspacing;
+
 	return w ? w + systrayspacing : 1;
 }
 
@@ -2450,8 +2456,6 @@ updatesystrayiconstate(Client *i, XPropertyEvent *ev)
 			systray->win, XEMBED_EMBEDDED_VERSION);
 }
 
-/* In dwm.c, modify the updatesystray() function */
-
 void
 updatesystray(void)
 {
@@ -2459,76 +2463,100 @@ updatesystray(void)
 	XWindowChanges wc;
 	Client *i;
 	Monitor *m = systraytomon(NULL);
-	unsigned int x = m->mx + m->mw - vp;
-	unsigned int y = m->by + sp;
+	unsigned int x = m->wx + m->ww - sp;
+	unsigned int y = m->by + vp;
 	unsigned int sw = TEXTW(stext) - lrpad + systrayspacing;
-	unsigned int w = 1;
+	unsigned int w;
 
 	if (!showsystray)
 		return;
+
 	if (systrayonleft)
 		x -= sw + lrpad / 2;
+
 	if (!systray) {
 		/* init systray */
 		if (!(systray = (Systray *)calloc(1, sizeof(Systray))))
 			die("fatal: could not malloc() %u bytes\n", sizeof(Systray));
-		
+
 		wa.override_redirect = True;
 		wa.background_pixel  = scheme[SchemeSystray][ColBg].pixel;
 		wa.border_pixel      = 0;
 		wa.colormap          = cmap;
-		wa.event_mask        = ButtonPressMask | ExposureMask;
-		
-		systray->win = XCreateWindow(dpy, root, x, y, w, bh, 0, depth,
+		wa.event_mask        = ButtonPressMask | ExposureMask | SubstructureNotifyMask;
+
+		systray->win = XCreateWindow(dpy, root, x, y, 1, bh, 0, depth,
 				InputOutput, visual,
 				CWOverrideRedirect|CWBackPixel|CWBorderPixel|CWColormap|CWEventMask, &wa);
-		
-		XSelectInput(dpy, systray->win, SubstructureNotifyMask);
+
 		XChangeProperty(dpy, systray->win, netatom[NetSystemTrayOrientation], XA_CARDINAL, 32,
 				PropModeReplace, (unsigned char *)&netatom[NetSystemTrayOrientationHorz], 1);
-		
-		unsigned long visualid = XVisualIDFromVisual(visual);
-		XChangeProperty(dpy, systray->win, XInternAtom(dpy, "_NET_SYSTEM_TRAY_VISUAL", False),
-				XA_VISUALID, 32, PropModeReplace, (unsigned char *)&visualid, 1);	
-		
+
+		{
+			unsigned long visualid = XVisualIDFromVisual(visual);
+			XChangeProperty(dpy, systray->win, XInternAtom(dpy, "_NET_SYSTEM_TRAY_VISUAL", False),
+					XA_VISUALID, 32, PropModeReplace, (unsigned char *)&visualid, 1);
+		}
+
+		XClassHint ch = {
+			.res_name  = "systray",
+			.res_class = "dwmsystray",
+		};
+		XSetClassHint(dpy, systray->win, &ch);
+		XStoreName(dpy, systray->win, "dwmsystray");
+
 		XMapRaised(dpy, systray->win);
 		XSetSelectionOwner(dpy, netatom[NetSystemTray], systray->win, CurrentTime);
+
 		if (XGetSelectionOwner(dpy, netatom[NetSystemTray]) == systray->win) {
-			sendevent(root, xatom[Manager], StructureNotifyMask, CurrentTime, netatom[NetSystemTray], systray->win, 0, 0);
+			sendevent(root, xatom[Manager], StructureNotifyMask, CurrentTime,
+					netatom[NetSystemTray], systray->win, 0, 0);
 			XSync(dpy, False);
-		}
-		else {
+		} else {
 			fprintf(stderr, "dwm: unable to obtain system tray.\n");
 			free(systray);
 			systray = NULL;
 			return;
 		}
 	}
+
 	for (w = 0, i = systray->icons; i; i = i->next) {
-		wa.background_pixel = scheme[SchemeSystray][ColBg].pixel;
-		XChangeWindowAttributes(dpy, i->win, CWBackPixel, &wa);
-		XMapRaised(dpy, i->win);
+		if (!i->tags)
+			continue;
 		w += systrayspacing;
-		i->x = w;
-		XMoveResizeWindow(dpy, i->win, i->x, y - sp, i->w, i->h);
+		i->x = x - w - i->w;
+		XMoveResizeWindow(dpy, i->win, i->x, y, i->w, i->h);
+		
+		wc.sibling = systray->win;
+		wc.stack_mode = Above;
+		XConfigureWindow(dpy, i->win, CWSibling|CWStackMode, &wc);
+		
+		XMapWindow(dpy, i->win);
+		
 		w += i->w;
+		
 		if (i->mon != m)
 			i->mon = m;
 	}
+
 	w = w ? w + systrayspacing : 1;
 	x -= w;
+
 	XMoveResizeWindow(dpy, systray->win, x, y, w, bh);
 	wc.x = x; wc.y = y; wc.width = w; wc.height = bh;
 	wc.stack_mode = Above; wc.sibling = m->barwin;
 	XConfigureWindow(dpy, systray->win, CWX|CWY|CWWidth|CWHeight|CWSibling|CWStackMode, &wc);
 	XMapWindow(dpy, systray->win);
-	XMapSubwindows(dpy, systray->win);
+
 	/* redraw background (alpha-aware) */
-	XftDraw *d = XftDrawCreate(dpy, systray->win, visual, cmap);
-	if (d) {
-		XftDrawRect(d, &scheme[SchemeSystray][ColBg], 0, 0, w, bh);
-		XftDrawDestroy(d);
+	{
+		XftDraw *d = XftDrawCreate(dpy, systray->win, visual, cmap);
+		if (d) {
+			XftDrawRect(d, &scheme[SchemeSystray][ColBg], 0, 0, w, bh);
+			XftDrawDestroy(d);
+		}
 	}
+
 	XSync(dpy, False);
 }
 

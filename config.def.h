@@ -1,43 +1,49 @@
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
-static const unsigned int borderpx  = 1;        /* border pixel of windows */
-static const unsigned int snap      = 32;       /* snap pixel */
-static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
-static const unsigned int systrayonleft = 0;    /* 0: systray in the right corner, >0: systray on left of status text */
-static const unsigned int systrayspacing = 2;   /* systray spacing */
-static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
-static const int showsystray        = 1;        /* 0 means no systray */
-static const int showbar            = 1;        /* 0 means no bar */
-static const int topbar             = 1;        /* 0 means bottom bar */
-static const int vertpad            = 0;        /* vertical padding of bar */
-static const int sidepad            = 0;        /* horizontal padding of bar */
-static const char *fonts[]          = { "monospace:size=10" };
-static const char dmenufont[]       = "monospace:size=10";
+static const unsigned int borderpx  = 3;   /* border pixel of windows */
+static const unsigned int snap      = 32;  /* snap pixel */
 
-/* colorscheme */
-static const char col_gray1[]       = "#222222";
-static const char col_gray2[]       = "#444444";
-static const char col_gray3[]       = "#bbbbbb";
-static const char col_gray4[]       = "#eeeeee";
-static const char col_cyan[]        = "#005577";
+/* bar */
+static const int showbar  = 1;  /* 0 means no bar */
+static const int topbar   = 1;  /* 0 means bottom bar */
+static const int vertpad  = 0;  /* vertical padding of bar */
+static const int sidepad  = 0;  /* horizontal padding of bar */
+
+/* systray */
+static const          int showsystray    = 1;  /* 0 means no systray */
+static const unsigned int systraypinning = 0;  /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
+static const unsigned int systrayonleft  = 0;  /* 0: systray in the right corner, >0: systray on left of status text */
+static const unsigned int systrayspacing = 5;  /* systray spacing */
+static const unsigned int systraypadding = 0;  /* systray pading (detach from bar) */
+static const int systraypinningfailfirst = 1;  /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
+
+/* fonts */
+static const char *fonts[]     = { "monospace:size=10" };
+static const char dmenufont[]  = "monospace:size=10";
+
+/* colors & alphas */
+static const char col_gray1[]  = "#222222";
+static const char col_gray2[]  = "#444444";
+static const char col_gray3[]  = "#bbbbbb";
+static const char col_gray4[]  = "#eeeeee";
+static const char col_cyan[]   = "#005577";
 
 static const char *colors[][3] = {
 	/*                  fg         bg        */
 	[SchemeNorm]    = { col_gray3, col_gray1 },
 	[SchemeSel]     = { col_gray4, col_cyan  },
-	[SchemeSystray] = { col_gray3, col_gray1 },
-	[SchemeBorder]  = { col_cyan,  col_gray2 }
+	[SchemeSystray] = { col_gray3, col_gray1 }, /* fg is currently not used anywhere */
+	[SchemeBorder]  = { col_cyan,  col_gray2 }, /* fg is sel border color and bg is norm border color */
 };
 
 static const unsigned int alphas[][3] = {
 	/*                  fg      bg     */
 	[SchemeNorm]    = { OPAQUE, 0xd0   },
 	[SchemeSel]     = { OPAQUE, 0xd0   },
-	[SchemeSystray] = { OPAQUE, 0xd0   },
+	[SchemeSystray] = { OPAQUE, 0xd0   }, /* fg is currently not used anywhere */
 	[SchemeBorder]  = { OPAQUE, OPAQUE }, /* transparent borders are broken on most apps, recommend to be set on OPAQUE */
 };
-
 
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
