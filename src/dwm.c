@@ -311,6 +311,7 @@ static void (*handler[LASTEvent]) (XEvent *) = {
 	[UnmapNotify] = unmapnotify
 };
 static Atom wmatom[WMLast], netatom[NetLast], xatom[XLast];
+static Atom dwmsystrayicon;
 static int restart = 0;
 static int running = 1;
 static Cur *cursor[CurLast];
@@ -634,7 +635,6 @@ void
 clientmessage(XEvent *e)
 {
 	XWindowAttributes wa;
-	XSetWindowAttributes swa;
 	XClientMessageEvent *cme = &e->xclient;
 	Client *c = wintoclient(cme->window);
 
@@ -666,20 +666,17 @@ clientmessage(XEvent *e)
 			c->tags = 1;
 			updatesizehints(c);
 			updatesystrayicongeom(c, wa.width, wa.height);
-			XAddToSaveSet(dpy, c->win);
-			XSelectInput(dpy, c->win, StructureNotifyMask | PropertyChangeMask | ResizeRedirectMask);
+			XSelectInput(dpy, c->win, StructureNotifyMask | PropertyChangeMask);
 
-			/* keep tray icons out of normal window management */
-			if (!wa.override_redirect) {
-				swa.override_redirect = True;
-				XChangeWindowAttributes(dpy, c->win, CWOverrideRedirect, &swa);
+			/* Tag as tray icon for compositors (picom rules, rounded-corners exclusions, etc.) */
+			if (dwmsystrayicon) {
+				unsigned long v = 1;
+				XChangeProperty(dpy, c->win, dwmsystrayicon, XA_CARDINAL, 32,
+						PropModeReplace, (unsigned char *)&v, 1);
 			}
 
-			/* do not reparent: keep icon a root window so its alpha blends against the tray/bar */
-			/* XReparentWindow(dpy, c->win, systray->win, 0, 0); */
-
-			sendevent(c->win, netatom[Xembed], StructureNotifyMask, CurrentTime,
-					XEMBED_EMBEDDED_NOTIFY, 0, systray->win, XEMBED_EMBEDDED_VERSION);
+			/* Do NOT reparent: keep icons top-level so ARGB transparency blends against systray bg window. */
+			sendevent(c->win, netatom[Xembed], StructureNotifyMask, CurrentTime, XEMBED_EMBEDDED_NOTIFY, 0, systray->win, XEMBED_EMBEDDED_VERSION);
 			XSync(dpy, False);
 			resizebarwin(selmon);
 			updatesystray();
@@ -1071,12 +1068,19 @@ getsystraywidth(void)
 	unsigned int w = 0;
 	Client *i;
 
-	if (showsystray)
-		for (i = systray->icons; i; i = i->next)
-			if (i->tags)
-				w += i->w + systrayspacing;
+	if (!showsystray || !systray)
+		return 0;
 
-	return w ? w + systrayspacing : 1;
+	for (i = systray->icons; i; i = i->next)
+		if (i->tags)
+			w += i->w + systrayspacing;
+
+	if (!w)
+		return 0;
+
+	/* outer spacing + one-sided padding towards the status area */
+	w += systrayspacing + systraypadding;
+	return w;
 }
 
 int
@@ -1912,6 +1916,7 @@ setup(void)
 	netatom[NetSystemTrayOP] = XInternAtom(dpy, "_NET_SYSTEM_TRAY_OPCODE", False);
 	netatom[NetSystemTrayOrientation] = XInternAtom(dpy, "_NET_SYSTEM_TRAY_ORIENTATION", False);
 	netatom[NetSystemTrayOrientationHorz] = XInternAtom(dpy, "_NET_SYSTEM_TRAY_ORIENTATION_HORZ", False);
+	dwmsystrayicon = XInternAtom(dpy, "_DWM_SYSTRAY_ICON", False);
 	netatom[NetWMName] = XInternAtom(dpy, "_NET_WM_NAME", False);
 	netatom[NetWMState] = XInternAtom(dpy, "_NET_WM_STATE", False);
 	netatom[NetWMCheck] = XInternAtom(dpy, "_NET_SUPPORTING_WM_CHECK", False);
@@ -2463,16 +2468,16 @@ updatesystray(void)
 	XWindowChanges wc;
 	Client *i;
 	Monitor *m = systraytomon(NULL);
-	unsigned int x = m->wx + m->ww - sp;
+	unsigned int x0 = m->wx + m->ww - sp;
 	unsigned int y = m->by + vp;
 	unsigned int sw = TEXTW(stext) - lrpad + systrayspacing;
-	unsigned int w;
+	unsigned int w, iconsw, right;
 
 	if (!showsystray)
 		return;
 
 	if (systrayonleft)
-		x -= sw + lrpad / 2;
+		x0 -= sw + lrpad / 2;
 
 	if (!systray) {
 		/* init systray */
@@ -2485,29 +2490,29 @@ updatesystray(void)
 		wa.colormap          = cmap;
 		wa.event_mask        = ButtonPressMask | ExposureMask | SubstructureNotifyMask;
 
-		systray->win = XCreateWindow(dpy, root, x, y, 1, bh, 0, depth,
+		systray->win = XCreateWindow(dpy, root, x0, y, 1, bh, 0, depth,
 				InputOutput, visual,
 				CWOverrideRedirect|CWBackPixel|CWBorderPixel|CWColormap|CWEventMask, &wa);
 
 		XChangeProperty(dpy, systray->win, netatom[NetSystemTrayOrientation], XA_CARDINAL, 32,
 				PropModeReplace, (unsigned char *)&netatom[NetSystemTrayOrientationHorz], 1);
-
 		{
 			unsigned long visualid = XVisualIDFromVisual(visual);
 			XChangeProperty(dpy, systray->win, XInternAtom(dpy, "_NET_SYSTEM_TRAY_VISUAL", False),
 					XA_VISUALID, 32, PropModeReplace, (unsigned char *)&visualid, 1);
 		}
 
-		XClassHint ch = {
-			.res_name  = "systray",
-			.res_class = "dwmsystray",
-		};
-		XSetClassHint(dpy, systray->win, &ch);
-		XStoreName(dpy, systray->win, "dwmsystray");
+		{
+			XClassHint ch = {
+				.res_name  = "systray",
+				.res_class = "dwmsystray",
+			};
+			XSetClassHint(dpy, systray->win, &ch);
+			XStoreName(dpy, systray->win, "dwmsystray");
+		}
 
 		XMapRaised(dpy, systray->win);
 		XSetSelectionOwner(dpy, netatom[NetSystemTray], systray->win, CurrentTime);
-
 		if (XGetSelectionOwner(dpy, netatom[NetSystemTray]) == systray->win) {
 			sendevent(root, xatom[Manager], StructureNotifyMask, CurrentTime,
 					netatom[NetSystemTray], systray->win, 0, 0);
@@ -2520,30 +2525,19 @@ updatesystray(void)
 		}
 	}
 
-	for (w = 0, i = systray->icons; i; i = i->next) {
-		if (!i->tags)
-			continue;
-		w += systrayspacing;
-		i->x = x - w - i->w;
-		XMoveResizeWindow(dpy, i->win, i->x, y, i->w, i->h);
-		
-		wc.sibling = systray->win;
-		wc.stack_mode = Above;
-		XConfigureWindow(dpy, i->win, CWSibling|CWStackMode, &wc);
-		
-		XMapWindow(dpy, i->win);
-		
-		w += i->w;
-		
-		if (i->mon != m)
-			i->mon = m;
-	}
+	/* compute icon group width */
+	for (iconsw = 0, i = systray->icons; i; i = i->next)
+		if (i->tags)
+			iconsw += i->w + systrayspacing;
 
-	w = w ? w + systrayspacing : 1;
-	x -= w;
+	if (iconsw)
+		iconsw += systrayspacing;
 
-	XMoveResizeWindow(dpy, systray->win, x, y, w, bh);
-	wc.x = x; wc.y = y; wc.width = w; wc.height = bh;
+	w = iconsw ? iconsw : 1;
+
+	/* place tray background window: right edge anchored at x0 */
+	XMoveResizeWindow(dpy, systray->win, x0 - w, y, w, bh);
+	wc.x = x0 - w; wc.y = y; wc.width = w; wc.height = bh;
 	wc.stack_mode = Above; wc.sibling = m->barwin;
 	XConfigureWindow(dpy, systray->win, CWX|CWY|CWWidth|CWHeight|CWSibling|CWStackMode, &wc);
 	XMapWindow(dpy, systray->win);
@@ -2555,6 +2549,25 @@ updatesystray(void)
 			XftDrawRect(d, &scheme[SchemeSystray][ColBg], 0, 0, w, bh);
 			XftDrawDestroy(d);
 		}
+	}
+
+	/* place icons in root coordinates, right-aligned inside systray bg */
+	right = x0;
+	for (w = 0, i = systray->icons; i; i = i->next) {
+		if (!i->tags)
+			continue;
+		w += systrayspacing;
+		i->x = right - w - i->w;
+		XMoveResizeWindow(dpy, i->win, i->x, y, i->w, i->h);
+
+		/* keep icons above the tray background window */
+		wc.sibling = systray->win;
+		wc.stack_mode = Above;
+		XConfigureWindow(dpy, i->win, CWSibling|CWStackMode, &wc);
+		XMapWindow(dpy, i->win);
+		w += i->w;
+		if (i->mon != m)
+			i->mon = m;
 	}
 
 	XSync(dpy, False);
