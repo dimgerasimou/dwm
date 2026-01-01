@@ -647,6 +647,14 @@ clientmessage(XEvent *e)
 				free(c);
 				return;
 			}
+			Window win = cme->data.l[2];
+			Client *mc;
+
+			if ((mc = wintoclient(win))) {
+				/* It got managed as a normal window before docking. Undo that. */
+				unmanage(mc, 0);
+				XSync(dpy, False);
+			}
 			c->mon = selmon;
 			c->next = systray->icons;
 			systray->icons = c;
@@ -1241,6 +1249,17 @@ manage(Window w, XWindowAttributes *wa)
 	Client *c, *t = NULL;
 	Window trans = None;
 	XWindowChanges wc;
+	Atom atom;
+	int format;
+	unsigned long n, extra;
+	unsigned char *p = NULL;
+
+	if (XGetWindowProperty(dpy, w, dwmsystrayicon, 0L, 1L, False, XA_CARDINAL,
+	                       &atom, &format, &n, &extra, &p) == Success && p) {
+		XFree(p);
+		/* This is a tray icon window; don't manage it as a normal client. */
+		return;
+	}
 
 	c = ecalloc(1, sizeof(Client));
 	c->win = w;
@@ -1276,10 +1295,8 @@ manage(Window w, XWindowAttributes *wa)
 	updatesizehints(c);
 	updatewmhints(c);
 
-	int format;
-	unsigned long *data, n, extra;
 	Monitor *m;
-	Atom atom;
+	unsigned long *data;
 	if (XGetWindowProperty(dpy, c->win, netatom[NetClientInfo], 0L, 2L, False, XA_CARDINAL,
 			&atom, &format, &n, &extra, (unsigned char **)&data) == Success && n == 2) {
 		c->tags = *data;
