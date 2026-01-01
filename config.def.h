@@ -11,6 +11,9 @@ static const int topbar   = 1;       /* 0 means bottom bar */
 static const int vertpad  = 0;       /* vertical padding of bar */
 static const int sidepad  = 0;       /* horizontal padding of bar */
 static const int drawvacanttags = 0; /* 0 means no vacant tags drawn*/
+static const int centertitle    = 1; /* center window title */
+static const int showtitle      = 1; /* show window title */
+static const int showltsymbol   = 1; /* show layout symbol */
 
 /* systray */
 static const          int showsystray    = 1;  /* 0 means no systray */
@@ -32,19 +35,21 @@ static const char col_gray4[]  = "#eeeeee";
 static const char col_cyan[]   = "#005577";
 
 static const char *colors[][3] = {
-	/*                  fg         bg        */
-	[SchemeNorm]    = { col_gray3, col_gray1 },
-	[SchemeSel]     = { col_gray4, col_cyan  },
-	[SchemeSystray] = { col_gray3, col_gray1 }, /* fg is currently not used anywhere */
-	[SchemeBorder]  = { col_cyan,  col_gray2 }, /* fg is sel border color and bg is norm border color */
+	/*                   fg         bg        */
+	[SchemeNorm]     = { col_gray3, col_gray1 },
+	[SchemeSel]      = { col_gray4, col_cyan  },
+	[SchemeSelTitle] = { col_gray4, col_cyan  },
+	[SchemeSystray]  = { col_gray3, col_gray1 }, /* fg is currently not used anywhere */
+	[SchemeBorder]   = { col_cyan,  col_gray2 }, /* fg is sel border color and bg is norm border color */
 };
 
 static const unsigned int alphas[][3] = {
-	/*                  fg      bg     */
-	[SchemeNorm]    = { OPAQUE, 0xd0   },
-	[SchemeSel]     = { OPAQUE, 0xd0   },
-	[SchemeSystray] = { OPAQUE, 0xd0   }, /* fg is currently not used anywhere */
-	[SchemeBorder]  = { OPAQUE, OPAQUE }, /* transparent borders are broken on most apps, recommend to be set on OPAQUE */
+	/*                   fg      bg     */
+	[SchemeNorm]     = { OPAQUE, 0xd0   },
+	[SchemeSel]      = { OPAQUE, 0xd0   },
+	[SchemeSelTitle] = { OPAQUE, 0xd0   },
+	[SchemeSystray]  = { OPAQUE, 0xd0   }, /* fg is currently not used anywhere */
+	[SchemeBorder]   = { OPAQUE, OPAQUE }, /* transparent borders are broken on most apps, recommend to be set on OPAQUE */
 };
 
 /* tagging */
