@@ -6,10 +6,11 @@ static const unsigned int snap      = 32;  /* snap pixel */
 static const unsigned int gappx     = 5;   /* gaps between windows */
 
 /* bar */
-static const int showbar  = 1;  /* 0 means no bar */
-static const int topbar   = 1;  /* 0 means bottom bar */
-static const int vertpad  = 0;  /* vertical padding of bar */
-static const int sidepad  = 0;  /* horizontal padding of bar */
+static const int showbar  = 1;       /* 0 means no bar */
+static const int topbar   = 1;       /* 0 means bottom bar */
+static const int vertpad  = 0;       /* vertical padding of bar */
+static const int sidepad  = 0;       /* horizontal padding of bar */
+static const int drawvacanttags = 0; /* 0 means no vacant tags drawn*/
 
 /* systray */
 static const          int showsystray    = 1;  /* 0 means no systray */
