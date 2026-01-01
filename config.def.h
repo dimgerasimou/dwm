@@ -60,9 +60,11 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	/* class     instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
+	{ "Gimp",    NULL,     NULL,           0,         1,          0,           0,        -1 },
+	{ "Firefox", NULL,     NULL,           1 << 8,    0,          0,          -1,        -1 },
+	{ "St",      NULL,     NULL,           0,         0,          1,           0,        -1 },
+	{ NULL,      NULL,     "Event Tester", 0,         0,          0,           1,        -1 }, /* xev */
 };
 
 /* layout(s) */
@@ -74,6 +76,7 @@ static const int lockfullscreen  = 1;            /* 1 will force focus on the fu
 static const int refreshrate     = 120;          /* refresh rate (per second) for client move/resize */
 static const int attachwhichside = AttachAside;  /* valid values: AttachDefault, AttachAbove, AttachAside, AttachBelow, AttachBottom, AttachTop */
 static const int nobrodersingle  = 1;            /* 1 means no window border when only a single window is on the screen */
+static const int swallowfloating = 0;            /* 1 means swallow floating windows by default */
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
