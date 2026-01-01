@@ -193,9 +193,6 @@ drw_clr_create(Drw *drw, Clr *dest, const char *clrname, unsigned int alpha)
 		XftColorFree(drw->dpy, drw->visual, drw->cmap, &col);
 		if (!XftColorAllocValue(drw->dpy, drw->visual, drw->cmap, &render, dest))
 			die("error, cannot allocate color '%s'", clrname);
-
-		if (alpha == 0xff)
-			dest->pixel |= 0xff << 24;
 	} else {
 		*dest = col;
 	}

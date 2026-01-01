@@ -72,7 +72,7 @@
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel }; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeSystray, SchemeBorder }; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
        NetSystemTray, NetSystemTrayOP, NetSystemTrayOrientation, NetSystemTrayOrientationHorz,
        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
@@ -670,15 +670,14 @@ clientmessage(XEvent *e)
 			XSelectInput(dpy, c->win, StructureNotifyMask | PropertyChangeMask | ResizeRedirectMask);
 			XReparentWindow(dpy, c->win, systray->win, 0, 0);
 			/* use parents background color with alpha */
-			swa.background_pixel  = scheme[SchemeNorm][ColBg].pixel;
-			swa.background_pixel = (swa.background_pixel & 0x00ffffffU) | (systrayalpha << 24);
+			swa.background_pixel  = scheme[SchemeSystray][ColBg].pixel;
 			swa.border_pixel = 0;
 			XChangeWindowAttributes(dpy, c->win, CWBackPixel | CWBorderPixel, &swa);
-			sendevent(c->win, netatom[Xembed], StructureNotifyMask, CurrentTime, XEMBED_EMBEDDED_NOTIFY, 0 , systray->win, XEMBED_EMBEDDED_VERSION);
+			sendevent(c->win, netatom[Xembed], StructureNotifyMask, CurrentTime, XEMBED_EMBEDDED_NOTIFY, 0, systray->win, XEMBED_EMBEDDED_VERSION);
 			/* FIXME not sure if I have to send these events, too */
-			sendevent(c->win, netatom[Xembed], StructureNotifyMask, CurrentTime, XEMBED_FOCUS_IN, 0 , systray->win, XEMBED_EMBEDDED_VERSION);
-			sendevent(c->win, netatom[Xembed], StructureNotifyMask, CurrentTime, XEMBED_WINDOW_ACTIVATE, 0 , systray->win, XEMBED_EMBEDDED_VERSION);
-			sendevent(c->win, netatom[Xembed], StructureNotifyMask, CurrentTime, XEMBED_MODALITY_ON, 0 , systray->win, XEMBED_EMBEDDED_VERSION);
+			sendevent(c->win, netatom[Xembed], StructureNotifyMask, CurrentTime, XEMBED_FOCUS_IN, 0, systray->win, XEMBED_EMBEDDED_VERSION);
+			sendevent(c->win, netatom[Xembed], StructureNotifyMask, CurrentTime, XEMBED_WINDOW_ACTIVATE, 0, systray->win, XEMBED_EMBEDDED_VERSION);
+			sendevent(c->win, netatom[Xembed], StructureNotifyMask, CurrentTime, XEMBED_MODALITY_ON, 0, systray->win, XEMBED_EMBEDDED_VERSION);
 			XSync(dpy, False);
 			resizebarwin(selmon);
 			updatesystray();
@@ -690,10 +689,8 @@ clientmessage(XEvent *e)
 	if (!c)
 		return;
 	if (cme->message_type == netatom[NetWMState]) {
-		if (cme->data.l[1] == netatom[NetWMFullscreen]
-		|| cme->data.l[2] == netatom[NetWMFullscreen])
-			setfullscreen(c, (cme->data.l[0] == 1 /* _NET_WM_STATE_ADD    */
-				|| (cme->data.l[0] == 2 /* _NET_WM_STATE_TOGGLE */ && !c->isfullscreen)));
+		if (cme->data.l[1] == netatom[NetWMFullscreen] || cme->data.l[2] == netatom[NetWMFullscreen])
+			setfullscreen(c, (cme->data.l[0] == 1 /* _NET_WM_STATE_ADD    */ || (cme->data.l[0] == 2 /* _NET_WM_STATE_TOGGLE */ && !c->isfullscreen)));
 	} else if (cme->message_type == netatom[NetActiveWindow]) {
 		if (c != selmon->sel && !c->isurgent)
 			seturgent(c, 1);
@@ -1714,20 +1711,21 @@ setclientborder(Client *c, int focused)
 	XWindowAttributes wa;
 	XRenderPictFormat *fmt;
 	const char *hex;
+	unsigned int alpha;
 	unsigned long px, mask;
 
 	if (!c)
 		return;
 
-	hex = focused ? colors[SchemeSel][ColBorder]
-	              : colors[SchemeNorm][ColBorder];
+	hex  = focused ? colors[SchemeBorder][ColFg] : colors[SchemeBorder][ColBg];
+	alpha = focused ? alphas[SchemeBorder][ColFg] : alphas[SchemeBorder][ColBg];
 
-	px = allocpixel(c->win, hex, OPAQUE);
+	px = allocpixel(c->win, hex, alpha);
 	if (!px)
 		return;
 
 	/* Force opaque alpha for ARGB windows using XRender's (shift,mask) */
-	if (OPAQUE == OPAQUE && XGetWindowAttributes(dpy, c->win, &wa) && wa.depth == 32) {
+	if (alpha == OPAQUE && XGetWindowAttributes(dpy, c->win, &wa) && wa.depth == 32) {
 		fmt = XRenderFindVisualFormat(dpy, wa.visual);
 		if (fmt && fmt->type == PictTypeDirect && fmt->direct.alphaMask) {
 			mask = (unsigned long)fmt->direct.alphaMask;
@@ -1919,40 +1917,41 @@ setup(void)
 	xatom[Manager] = XInternAtom(dpy, "MANAGER", False);
 	xatom[Xembed] = XInternAtom(dpy, "_XEMBED", False);
 	xatom[XembedInfo] = XInternAtom(dpy, "_XEMBED_INFO", False);
+
 	/* init cursors */
 	cursor[CurNormal] = drw_cur_create(drw, XC_left_ptr);
 	cursor[CurResize] = drw_cur_create(drw, XC_sizing);
 	cursor[CurMove] = drw_cur_create(drw, XC_fleur);
+
 	/* init appearance */
 	scheme = ecalloc(LENGTH(colors), sizeof(Clr *));
-	unsigned int alphas[] = {OPAQUE, baralpha, OPAQUE};
 	for (i = 0; i < LENGTH(colors); i++)
-		scheme[i] = drw_scm_create(drw, colors[i], alphas, 3);
+		scheme[i] = drw_scm_create(drw, colors[i], alphas[i], 2);
+
 	/* init system tray */
 	updatesystray();
+
 	/* init bars */
 	updatebars();
 	updatestatus();
 	updatebarpos(selmon);
+
 	/* supporting window for NetWMCheck */
 	wmcheckwin = XCreateSimpleWindow(dpy, root, 0, 0, 1, 1, 0, 0, 0);
-	XChangeProperty(dpy, wmcheckwin, netatom[NetWMCheck], XA_WINDOW, 32,
-		PropModeReplace, (unsigned char *) &wmcheckwin, 1);
-	XChangeProperty(dpy, wmcheckwin, netatom[NetWMName], utf8string, 8,
-		PropModeReplace, (unsigned char *) "dwm", 3);
-	XChangeProperty(dpy, root, netatom[NetWMCheck], XA_WINDOW, 32,
-		PropModeReplace, (unsigned char *) &wmcheckwin, 1);
+	XChangeProperty(dpy, wmcheckwin, netatom[NetWMCheck], XA_WINDOW, 32, PropModeReplace, (unsigned char *) &wmcheckwin, 1);
+	XChangeProperty(dpy, wmcheckwin, netatom[NetWMName], utf8string, 8, PropModeReplace, (unsigned char *) "dwm", 3);
+	XChangeProperty(dpy, root, netatom[NetWMCheck], XA_WINDOW, 32, PropModeReplace, (unsigned char *) &wmcheckwin, 1);
+
 	/* EWMH support per view */
-	XChangeProperty(dpy, root, netatom[NetSupported], XA_ATOM, 32,
-		PropModeReplace, (unsigned char *) netatom, NetLast);
+	XChangeProperty(dpy, root, netatom[NetSupported], XA_ATOM, 32, PropModeReplace, (unsigned char *) netatom, NetLast);
 	XDeleteProperty(dpy, root, netatom[NetClientList]);
 	XDeleteProperty(dpy, root, netatom[NetClientInfo]);
+
 	/* select events */
 	wa.cursor = cursor[CurNormal]->cursor;
-	wa.event_mask = SubstructureRedirectMask|SubstructureNotifyMask
-		|ButtonPressMask|PointerMotionMask|EnterWindowMask
-		|LeaveWindowMask|StructureNotifyMask|PropertyChangeMask;
-	XChangeWindowAttributes(dpy, root, CWEventMask|CWCursor, &wa);
+	wa.event_mask = SubstructureRedirectMask | SubstructureNotifyMask | ButtonPressMask| PointerMotionMask
+					| EnterWindowMask | LeaveWindowMask | StructureNotifyMask | PropertyChangeMask;
+	XChangeWindowAttributes(dpy, root, CWEventMask | CWCursor, &wa);
 	XSelectInput(dpy, root, wa.event_mask);
 	grabkeys();
 	focus(NULL);
@@ -2451,6 +2450,8 @@ updatesystrayiconstate(Client *i, XPropertyEvent *ev)
 			systray->win, XEMBED_EMBEDDED_VERSION);
 }
 
+/* In dwm.c, modify the updatesystray() function */
+
 void
 updatesystray(void)
 {
@@ -2473,8 +2474,7 @@ updatesystray(void)
 			die("fatal: could not malloc() %u bytes\n", sizeof(Systray));
 		
 		wa.override_redirect = True;
-		wa.background_pixel  = scheme[SchemeNorm][ColBg].pixel;
-		wa.background_pixel = (wa.background_pixel & 0x00ffffffU) | (systrayalpha << 24);
+		wa.background_pixel  = scheme[SchemeSystray][ColBg].pixel;
 		wa.border_pixel      = 0;
 		wa.colormap          = cmap;
 		wa.event_mask        = ButtonPressMask | ExposureMask;
@@ -2505,8 +2505,7 @@ updatesystray(void)
 		}
 	}
 	for (w = 0, i = systray->icons; i; i = i->next) {
-		/* keep tray icon background consistent (alpha-aware, per icon visual) */
-		wa.background_pixel = allocpixel(i->win, colors[SchemeNorm][ColBg], systrayalpha);
+		wa.background_pixel = scheme[SchemeSystray][ColBg].pixel;
 		XChangeWindowAttributes(dpy, i->win, CWBackPixel, &wa);
 		XMapRaised(dpy, i->win);
 		w += systrayspacing;
@@ -2525,23 +2524,10 @@ updatesystray(void)
 	XMapWindow(dpy, systray->win);
 	XMapSubwindows(dpy, systray->win);
 	/* redraw background (alpha-aware) */
-	{
-		XftDraw *d = XftDrawCreate(dpy, systray->win, visual, cmap);
-		if (d) {
-			Clr bg = scheme[SchemeNorm][ColBg];
-			if (useargb && systrayalpha != OPAQUE) {
-				XRenderColor rc = bg.color;
-				unsigned int a = systrayalpha;
-				rc.alpha = a * 0x101;
-				rc.red   = (rc.red   * a) / 255;
-				rc.green = (rc.green * a) / 255;
-				rc.blue  = (rc.blue  * a) / 255;
-				/* allocate a temp bg color with systray alpha */
-				XftColorAllocValue(dpy, visual, cmap, &rc, &bg);
-			}
-			XftDrawRect(d, &bg, 0, 0, w, bh);
-			XftDrawDestroy(d);
-		}
+	XftDraw *d = XftDrawCreate(dpy, systray->win, visual, cmap);
+	if (d) {
+		XftDrawRect(d, &scheme[SchemeSystray][ColBg], 0, 0, w, bh);
+		XftDrawDestroy(d);
 	}
 	XSync(dpy, False);
 }
