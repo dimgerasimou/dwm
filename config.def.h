@@ -82,6 +82,7 @@ static const int lockfullscreen  = 1;            /* 1 will force focus on the fu
 static const int refreshrate     = 120;          /* refresh rate (per second) for client move/resize */
 static const int attachwhichside = AttachAside;  /* valid values: AttachDefault, AttachAbove, AttachAside, AttachBelow, AttachBottom, AttachTop */
 static const int swallowfloating = 0;            /* 1 means swallow floating windows by default */
+static const int focusonwheel    = 1;            /* 1 means focus on scroll as well, not only on click */
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
