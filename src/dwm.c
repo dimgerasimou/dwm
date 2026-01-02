@@ -276,6 +276,7 @@ static void sighup(int unused);
 static void sigstatusbar(const Arg *arg);
 static void sigterm(int unused);
 static void spawn(const Arg *arg);
+static int status2dtextwidth(const char *s);
 static void swallow(Client *p, Client *c);
 static Client *swallowingclient(Window w);
 static Monitor *systraytomon(Monitor *m);
@@ -325,7 +326,7 @@ static const char autostartsh[] = "autostart.sh";
 static const char broken[] = "broken";
 static const char dwmdir[] = "dwm";
 static const char localshare[] = ".local/share";
-static char stext[256];
+static char stext[1024];
 static int statusw;
 static int statussig;
 static pid_t statuspid = -1;
@@ -701,7 +702,7 @@ buttonpress(XEvent *e)
 				if ((unsigned char)(*s) < ' ') {
 					ch = *s;
 					*s = '\0';
-					x += TEXTW(text) - lrpad;
+					x += status2dtextwidth(text);
 					*s = ch;
 					text = s + 1;
 					if (x >= ev->x)
@@ -764,8 +765,8 @@ cleanup(void)
 
 	for (i = 0; i < CurLast; i++)
 		drw_cur_free(drw, cursor[i]);
-	for (i = 0; i < LENGTH(colors); i++)
-		drw_scm_free(drw, scheme[i], 3);
+	for (i = 0; i < LENGTH(colors) + 1; i++)
+		drw_scm_free(drw, scheme[i], 2);
 	free(scheme);
 	XDestroyWindow(dpy, wmcheckwin);
 	drw_free(drw);
@@ -1035,6 +1036,130 @@ dirtomon(int dir)
 	return m;
 }
 
+
+int
+status2dtextwidth(const char *s)
+{
+	int w = 0;
+	int iscode = 0;
+	const char *p = s;
+	const char *chunk = s;
+
+	for (; *p; p++) {
+		if (*p == '^') {
+			if (!iscode) {
+				/* end of a plain-text chunk */
+				if (p > chunk) {
+					char buf[1024];
+					int n = (int)(p - chunk);
+					if (n >= (int)sizeof(buf)) n = (int)sizeof(buf) - 1;
+					memcpy(buf, chunk, n);
+					buf[n] = '\0';
+					w += TEXTW(buf) - lrpad;
+				}
+				iscode = 1;
+			} else {
+				/* end of code block */
+				iscode = 0;
+				chunk = p + 1;
+			}
+		} else if (iscode && *p == 'f') {
+			/* ^f<px> : forward x by px */
+			char *endp;
+			long px = strtol(p + 1, &endp, 10);
+			if (endp && endp > p + 1) {
+				w += (int)px;
+				p = endp - 1; /* -1 because for-loop increments */
+			}
+		}
+	}
+
+	/* trailing plain chunk */
+	if (!iscode && chunk && *chunk) {
+		w += TEXTW(chunk) - lrpad;
+	}
+
+	return w;
+}
+
+static void
+drawstatusbar2d(int x, int bh, const char *st)
+{
+	int i, w;
+	short iscode = 0;
+	char *text, *p;
+
+	if (!st || !*st)
+		return;
+
+	if (!(text = strdup(st)))
+		die("strdup");
+	p = text;
+
+	/* start with a "neutral" scheme that we can mutate */
+	drw_setscheme(drw, scheme[LENGTH(colors)]);
+	drw->scheme[ColFg] = scheme[SchemeNorm][ColFg];
+	drw->scheme[ColBg] = scheme[SchemeNorm][ColBg];
+
+	for (i = 0; text[i]; i++) {
+		if (text[i] == '^' && !iscode) {
+			iscode = 1;
+
+			text[i] = '\0';
+			w = TEXTW(text) - lrpad;
+			drw_text(drw, x, 0, w, bh, 0, text, 0);
+			x += w;
+			text[i] = '^';
+
+			/* process code */
+			while (text[++i] && text[i] != '^') {
+				if (text[i] == 'c') {
+					char buf[8];
+					memcpy(buf, text + i + 1, 7);
+					buf[7] = '\0';
+					drw_clr_create(drw, &drw->scheme[ColFg], buf, alphas[SchemeNorm][ColFg]);
+					i += 7;
+				} else if (text[i] == 'b') {
+					char buf[8];
+					memcpy(buf, text + i + 1, 7);
+					buf[7] = '\0';
+					drw_clr_create(drw, &drw->scheme[ColBg], buf, alphas[SchemeNorm][ColBg]);
+					i += 7;
+				} else if (text[i] == 'd') {
+					drw->scheme[ColFg] = scheme[SchemeNorm][ColFg];
+					drw->scheme[ColBg] = scheme[SchemeNorm][ColBg];
+				} else if (text[i] == 'r') {
+					int rx = atoi(text + ++i);
+					while (text[i] && text[++i] != ',');
+					int ry = atoi(text + ++i);
+					while (text[i] && text[++i] != ',');
+					int rw = atoi(text + ++i);
+					while (text[i] && text[++i] != ',');
+					int rh = atoi(text + ++i);
+					drw_rect(drw, rx + x, ry, rw, rh, 1, 0);
+				} else if (text[i] == 'f') {
+					x += atoi(text + ++i);
+				}
+			}
+			/* skip trailing '^' and continue after code block */
+			if (text[i] == '^') {
+				text = text + i + 1;
+				i = -1;
+			}
+			iscode = 0;
+		}
+	}
+
+	/* trailing chunk */
+	if (!iscode && *text) {
+		w = TEXTW(text) - lrpad;
+		drw_text(drw, x, 0, w, bh, 0, text, 0);
+	}
+
+	free(p);
+	drw_setscheme(drw, scheme[SchemeNorm]);
+}
+
 void
 drawbar(Monitor *m)
 {
@@ -1053,23 +1178,32 @@ drawbar(Monitor *m)
 	/* draw status first so it can be overdrawn by tags later */
 	if (m == selmon) { /* status is only drawn on selected monitor */
 		char *text, *s, ch;
-		drw_setscheme(drw, scheme[SchemeNorm]);
+		int sx;
+		int w;
 
-		x = 0;
+		sx = m->ww - stw - 2 * sp - statusw;
+		/* background for the whole status area */
+		drw_setscheme(drw, scheme[LENGTH(colors)]);
+		drw->scheme[ColFg] = scheme[SchemeNorm][ColFg];
+		drw->scheme[ColBg] = scheme[SchemeNorm][ColBg];
+		drw_rect(drw, sx, 0, statusw, bh, 1, 1);
+
+		x = sx + 1; /* 1px left padding */
 		for (text = s = stext; *s; s++) {
 			if ((unsigned char)(*s) < ' ') {
 				ch = *s;
 				*s = '\0';
-				tw = TEXTW(text) - lrpad;
-				drw_text(drw, m->ww - stw - 2 * sp - statusw + x, 0, tw, bh, 0, text, 0);
-				x += tw;
+				w = status2dtextwidth(text);
+				drawstatusbar2d(x, bh, text);
+				x += w;
 				*s = ch;
 				text = s + 1;
 			}
 		}
-		tw = TEXTW(text) - lrpad + 2;
-		drw_text(drw, m->ww - stw - 2 * sp - statusw + x, 0, tw, bh, 0, text, 0);
+		w = status2dtextwidth(text);
+		drawstatusbar2d(x, bh, text);
 		tw = statusw;
+		drw_setscheme(drw, scheme[SchemeNorm]);
 	}
 
 	resizebarwin(m);
@@ -2335,7 +2469,8 @@ setup(void)
 	cursor[CurMove] = drw_cur_create(drw, XC_fleur);
 
 	/* init appearance */
-	scheme = ecalloc(LENGTH(colors), sizeof(Clr *));
+	scheme = ecalloc(LENGTH(colors) + 1, sizeof(Clr *));
+	scheme[LENGTH(colors)] = drw_scm_create(drw, colors[SchemeNorm], alphas[SchemeNorm], 2);
 	for (i = 0; i < LENGTH(colors); i++)
 		scheme[i] = drw_scm_create(drw, colors[i], alphas[i], 2);
 
@@ -2972,28 +3107,28 @@ updatesizehints(Client *c)
 void
 updatestatus(void)
 {
+	char *text, *s, ch;
+
 	if (!gettextprop(root, XA_WM_NAME, stext, sizeof(stext))) {
 		strcpy(stext, "dwm-"VERSION);
-		statusw = TEXTW(stext) - lrpad + 2;
+		statusw = status2dtextwidth(stext) + 2;
 	} else {
-		char *text, *s, ch;
-
-		statusw  = 0;
+		statusw = 0;
 		for (text = s = stext; *s; s++) {
 			if ((unsigned char)(*s) < ' ') {
 				ch = *s;
 				*s = '\0';
-				statusw += TEXTW(text) - lrpad;
+				statusw += status2dtextwidth(text);
 				*s = ch;
 				text = s + 1;
 			}
 		}
-		statusw += TEXTW(text) - lrpad + 2;
-
+		statusw += status2dtextwidth(text) + 2;
 	}
 	drawbar(selmon);
 	updatesystray();
 }
+
 
 
 void
