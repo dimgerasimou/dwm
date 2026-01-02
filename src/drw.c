@@ -144,7 +144,7 @@ xfont_free(Fnt *font)
 }
 
 Fnt*
-drw_fontset_create(Drw* drw, const char *fonts[], size_t fontcount)
+drw_fontset_create(Drw* drw, char *fonts[], size_t fontcount)
 {
 	Fnt *cur, *ret = NULL;
 	size_t i;
@@ -171,7 +171,7 @@ drw_fontset_free(Fnt *font)
 }
 
 void
-drw_clr_create(Drw *drw, Clr *dest, const char *clrname, unsigned int alpha)
+drw_clr_create(Drw *drw, Clr *dest, char *clrname, unsigned int alpha)
 {
 	XftColor col;
 	XRenderColor render;
@@ -200,7 +200,7 @@ drw_clr_create(Drw *drw, Clr *dest, const char *clrname, unsigned int alpha)
 
 /* Create color schemes. */
 Clr *
-drw_scm_create(Drw *drw, const char *clrnames[], const unsigned int clralphas[], size_t clrcount)
+drw_scm_create(Drw *drw, char *clrnames[], unsigned int clralphas[], size_t clrcount)
 {
 	size_t i;
 	Clr *ret;

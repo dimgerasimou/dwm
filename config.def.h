@@ -1,49 +1,54 @@
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
-static const unsigned int borderpx  = 3;   /* border pixel of windows */
-static const unsigned int snap      = 32;  /* snap pixel */
-static const unsigned int gappx     = 5;   /* gaps between windows */
+static unsigned int borderpx  = 3;   /* border pixel of windows */
+static unsigned int snap      = 32;  /* snap pixel */
+static unsigned int gappx     = 5;   /* gaps between windows */
 
 /* bar */
-static const int showbar  = 1;       /* 0 means no bar */
-static const int topbar   = 1;       /* 0 means bottom bar */
-static const int vertpad  = 0;       /* vertical padding of bar */
-static const int sidepad  = 0;       /* horizontal padding of bar */
-static const int drawvacanttags = 0; /* 0 means no vacant tags drawn*/
-static const int centertitle    = 1; /* center window title */
-static const int showtitle      = 1; /* show window title */
-static const int showltsymbol   = 1; /* show layout symbol */
+static unsigned int showbar        = 1;  /* 0 means no bar */
+static unsigned int topbar         = 1;  /* 0 means bottom bar */
+static unsigned int vertpad        = 0;  /* vertical padding of bar */
+static unsigned int sidepad        = 0;  /* horizontal padding of bar */
+static unsigned int drawvacanttags = 1;  /* 0 means no vacant tags drawn*/
+static unsigned int centertitle    = 1;  /* center window title */
+static unsigned int showtitle      = 1;  /* show window title */
+static unsigned int showltsymbol   = 1;  /* show layout symbol */
 
 /* systray */
-static const          int showsystray    = 1;  /* 0 means no systray */
-static const unsigned int systraypinning = 0;  /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
-static const unsigned int systrayonleft  = 0;  /* 0: systray in the right corner, >0: systray on left of status text */
-static const unsigned int systrayspacing = 5;  /* systray spacing */
-static const unsigned int systraypadding = 0;  /* systray pading (detach from bar) */
-static const int systraypinningfailfirst = 1;  /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
+static       unsigned int showsystray             = 1;  /* 0 means no systray */
+static const unsigned int systraypinning          = 0;  /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
+static       unsigned int systrayonleft           = 0;  /* 0: systray in the right corner, >0: systray on left of status text */
+static       unsigned int systrayspacing          = 5;  /* systray spacing */
+static       unsigned int systraypadding          = 0;  /* systray pading (detach from bar) */
+static const unsigned int systraypinningfailfirst = 1;  /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
 
 /* fonts */
-static const char *fonts[]     = { "monospace:size=10" };
-static const char dmenufont[]  = "monospace:size=10";
+static char font[256]      = "monspace:size=11";
+static char *fonts[]       = { font, "monspace:size=11" };
+static char dmenufont[256] = "monospace:size=10";
 
 /* colors & alphas */
-static const char col_gray1[]  = "#222222";
-static const char col_gray2[]  = "#444444";
-static const char col_gray3[]  = "#bbbbbb";
-static const char col_gray4[]  = "#eeeeee";
-static const char col_cyan[]   = "#005577";
+static char hexFg[16]      = "#bbbbbb";
+static char hexBg[16]      = "#222222";
+static char hexSelFg[16]   = "#eeeeee";
+static char hexSelBg[16]   = "#005577";
+static char hexTitleFg[16] = "#eeeeee";
+static char hexTitleBg[16] = "#222222";
+static char hexTrayBg[16]  = "#222222";
+static char hexBSel[16]    = "#005577";
+static char hexBUnsel[16]  = "#444444";
 
-static const char *colors[][3] = {
-	/*                   fg         bg        */
-	[SchemeNorm]     = { col_gray3, col_gray1 },
-	[SchemeSel]      = { col_gray4, col_cyan  },
-	[SchemeSelTitle] = { col_gray4, col_cyan  },
-	[SchemeSystray]  = { col_gray3, col_gray1 }, /* fg is currently not used anywhere */
-	[SchemeBorder]   = { col_cyan,  col_gray2 }, /* fg is sel border color and bg is norm border color */
+static char *colors[][2] = {
+	/*                   fg          bg         */
+	[SchemeNorm]     = { hexFg,      hexBg      },
+	[SchemeSel]      = { hexSelFg,   hexSelBg   },
+	[SchemeSelTitle] = { hexTitleFg, hexTitleBg },
+	[SchemeSystray]  = { hexFg,      hexTrayBg  }, /* fg is currently not used anywhere */
+	[SchemeBorder]   = { hexBSel,    hexBUnsel  }, /* fg is sel border color and bg is norm border color */
 };
 
-static const unsigned int alphas[][3] = {
+static unsigned int alphas[][2] = {
 	/*                   fg      bg     */
 	[SchemeNorm]     = { OPAQUE, 0xd0   },
 	[SchemeSel]      = { OPAQUE, 0xd0   },
@@ -70,12 +75,12 @@ static const Rule rules[] = {
 /* layout(s) */
 static const float mfact         = 0.55;         /* factor of master area size [0.05..0.95] */
 static const int nmaster         = 1;            /* number of clients in master area */
+static const int nobrodersingle  = 1;            /* 1 means no window border when only a single window is on the screen */
 static const int resizehints     = 1;            /* 1 means respect size hints in tiled resizals */
 static const int decorhints      = 1;            /* 1 means respect decoration hints */
 static const int lockfullscreen  = 1;            /* 1 will force focus on the fullscreen window */
 static const int refreshrate     = 120;          /* refresh rate (per second) for client move/resize */
 static const int attachwhichside = AttachAside;  /* valid values: AttachDefault, AttachAbove, AttachAside, AttachBelow, AttachBottom, AttachTop */
-static const int nobrodersingle  = 1;            /* 1 means no window border when only a single window is on the screen */
 static const int swallowfloating = 0;            /* 1 means swallow floating windows by default */
 
 static const Layout layouts[] = {
@@ -98,11 +103,46 @@ static const Layout layouts[] = {
 #define STATUSBAR "dwmblocks"
 
 /* commands */
-static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
-static const char *termcmd[]  = { "st", NULL };
+static char dmenumon[2]            = "0"; /* component of dmenucmd, manipulated in spawn() */
+static const char *dmenucmd[]      = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", hexBg, "-nf", hexFg, "-sb", hexSelBg, "-sf", hexSelFg, NULL };
+static const char *termcmd[]       = { "st", NULL };
 static const char scratchpadname[] = "scratchpad";
 static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34", NULL };
+
+/* Xresources preferences to load at startup */
+ResourcePref resources[] = {
+	{ "borderpx",       INTEGER, &borderpx                      },
+	{ "snap",           INTEGER, &snap                          },
+	{ "gappx",          INTEGER, &gappx                         },
+	{ "showbar",        INTEGER, &showbar                       },
+	{ "topbar",         INTEGER, &topbar                        },
+	{ "vertpad",        INTEGER, &vertpad                       },
+	{ "sidepad",        INTEGER, &sidepad                       },
+	{ "drawvacanttags", INTEGER, &drawvacanttags                },
+	{ "centertitle",    INTEGER, &centertitle                   },
+	{ "showtitle",      INTEGER, &showtitle                     },
+	{ "showltsymbol",   INTEGER, &showltsymbol                  },
+	{ "showsystray",    INTEGER, &showsystray                   },
+	{ "systrayonleft",  INTEGER, &systrayonleft                 },
+	{ "systrayspacing", INTEGER, &systrayspacing                },
+	{ "systraypadding", INTEGER, &systraypadding                },
+	{ "font",           STRING,  &font                          },
+	{ "dmenufont",      STRING,  &dmenufont                     },
+	{ "hexFg",          STRING,  &hexFg                         },
+	{ "hexBg",          STRING,  &hexBg                         },
+	{ "hexSelFg",       STRING,  &hexSelFg                      },
+	{ "hexSelBg",       STRING,  &hexSelBg                      },
+	{ "hexTitleFg",     STRING,  &hexTitleFg                    },
+	{ "hexTitleBg",     STRING,  &hexTitleBg                    },
+	{ "hexTrayBg",      STRING,  &hexTrayBg                     },
+	{ "hexBSel",        STRING,  &hexBSel                       },
+	{ "hexBUnsel",      STRING,  &hexBUnsel                     },
+	{ "alphaBg",        INTEGER, &alphas[SchemeNorm][ColBg]     },
+	{ "alphaSelBg",     INTEGER, &alphas[SchemeSel][ColBg]      },
+	{ "alphaTitleBg",   INTEGER, &alphas[SchemeSelTitle][ColBg] },
+	{ "alphaTrayBg",    INTEGER, &alphas[SchemeSystray][ColBg]  },
+};
+
 
 static const Key keys[] = {
 	/* modifier                     key        function        argument */

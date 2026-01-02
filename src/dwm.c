@@ -36,6 +36,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xproto.h>
 #include <X11/Xutil.h>
+#include <X11/Xresource.h>
 #ifdef XINERAMA
 #include <X11/extensions/Xinerama.h>
 #endif /* XINERAMA */
@@ -177,6 +178,19 @@ typedef struct {
 	int monitor;
 } Rule;
 
+/* Xresources preferences */
+enum ResourceType {
+	STRING = 0,
+	INTEGER = 1,
+	FLOAT = 2
+};
+
+typedef struct {
+	char *name;
+	enum ResourceType type;
+	void *dst;
+} ResourcePref;
+
 typedef struct Systray   Systray;
 struct Systray {
 	Window win;
@@ -237,6 +251,8 @@ static void incnmaster(const Arg *arg);
 static int isdescprocess(pid_t p, pid_t c);
 static void keypress(XEvent *e);
 static void killclient(const Arg *arg);
+static void loadresource(XrmDatabase db, char *name, enum ResourceType rtype, void *dst);
+static void loadxresources(void);
 static void manage(Window w, XWindowAttributes *wa);
 static void mappingnotify(XEvent *e);
 static void maprequest(XEvent *e);
@@ -1635,6 +1651,59 @@ killclient(const Arg *arg)
 		XSetErrorHandler(xerror);
 		XUngrabServer(dpy);
 	}
+}
+
+void
+loadresource(XrmDatabase db, char *name, enum ResourceType rtype, void *dst)
+{
+	char fullname[256];
+	char *type = NULL;
+	XrmValue ret;
+
+	snprintf(fullname, sizeof(fullname), "dwm.%s", name);
+	fullname[sizeof(fullname) - 1] = '\0';
+
+	if (!XrmGetResource(db, fullname, "dwm.*", &type, &ret) || !ret.addr || !type)
+		return;
+
+	if (strcmp(type, "String") != 0)
+		return;
+
+	switch (rtype) {
+	case STRING:
+		/* dst must point to a sufficiently large char[] buffer */
+		snprintf((char *)dst, 256, "%s", ret.addr);
+		break;
+	case INTEGER:
+		*(int *)dst = (int)strtoul(ret.addr, NULL, 0);
+		break;
+	case FLOAT:
+		*(float *)dst = strtof(ret.addr, NULL);
+		break;
+	}
+}
+
+void
+loadxresources(void)
+{
+	char *resm;
+	XrmDatabase db;
+	ResourcePref *p;
+
+	XrmInitialize();
+
+	resm = XResourceManagerString(dpy);
+	if (!resm)
+		return;
+
+	db = XrmGetStringDatabase(resm);
+	if (!db)
+		return;
+
+	for (p = resources; p < resources + LENGTH(resources); p++)
+		loadresource(db, p->name, p->type, p->dst);
+
+	XrmDestroyDatabase(db);
 }
 
 void
@@ -3577,6 +3646,8 @@ main(int argc, char *argv[])
 		die("dwm: cannot open display");
 	if (!(xcon = XGetXCBConnection(dpy)))
 		die("dwm: cannot get xcb connection\n");
+	XrmInitialize();
+	loadxresources();
 	checkotherwm();
 	setup();
 #ifdef __OpenBSD__
