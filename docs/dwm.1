@@ -35,7 +35,9 @@ On start, dwm can start additional programs that may be specified in two special
 shell scripts (see the FILES section below), autostart_blocking.sh and
 autostart.sh.  The former is executed first and dwm will wait for its
 termination before starting.  The latter is executed in the background before
-dwm enters its handler loop.
+dwm enters its handler loop.  Additionally, along with those two scripts,
+an exit script may be specified, exit.sh, that runs before cleanup and dwmw
+will also wait for its termination before exiting.
 .P
 Either of these files may be omitted.
 .SH OPTIONS
@@ -188,6 +190,9 @@ loop.
 .TP 15
 autostart_blocking.sh
 This file is started before any autostart.sh; dwm waits for its termination.
+.TP 14
+exit.sh
+This file is executed before exit; dwm waits for its termination.
 .SH SEE ALSO
 .BR dmenu (1),
 .BR st (1)

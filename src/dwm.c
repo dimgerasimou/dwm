@@ -20,6 +20,8 @@
  *
  * To understand everything else, start reading main().
  */
+#include <errno.h>
+#include <fcntl.h>
 #include <locale.h>
 #include <signal.h>
 #include <stdarg.h>
@@ -248,6 +250,7 @@ static void grabbuttons(Client *c, int focused);
 static void grabkeys(void);
 static void incnmaster(const Arg *arg);
 static int isdescprocess(pid_t p, pid_t c);
+static int isexecutable(const char *p);
 static void keypress(XEvent *e);
 static void killclient(const Arg *arg);
 static void loadresource(XrmDatabase db, char *name, enum ResourceType rtype, void *dst);
@@ -272,6 +275,8 @@ static void resizerequest(XEvent *e);
 static void restack(Monitor *m);
 static void run(void);
 static void runautostart(void);
+static void runexit(void);
+static void runscript(const char *p, int waitflag);
 static void scan(void);
 static int sendevent(Window w, Atom proto, int m, long d0, long d1, long d2, long d3, long d4);
 static void sendmon(Client *c, Monitor *m);
@@ -340,6 +345,7 @@ static const char autostartsh[] = "autostart.sh";
 static const char broken[] = "broken";
 static const char dwmdir[] = "dwm";
 static const char localshare[] = ".local/share";
+static const char exitsh[] = "exit.sh";
 static char stext[1024];
 static int statusw;
 static int statussig;
@@ -1586,6 +1592,15 @@ isdescprocess(pid_t p, pid_t c)
 	return (int)c;
 }
 
+int
+isexecutable(const char *p)
+{
+	struct stat st;
+	return p && access(p, X_OK) == 0
+	    && stat(p, &st) == 0
+	    && S_ISREG(st.st_mode);
+}
+
 #ifdef XINERAMA
 static int
 isuniquegeom(XineramaScreenInfo *unique, size_t n, XineramaScreenInfo *info)
@@ -2150,78 +2165,160 @@ run(void)
 void
 runautostart(void)
 {
-	char *pathpfx;
-	char *path;
-	char *xdgdatahome;
-	char *home;
+	const char *home, *xdgdatahome;
 	struct stat sb;
 
-	if ((home = getenv("HOME")) == NULL)
-		/* this is almost impossible */
+	char *pathpfx = NULL;
+	char *block = NULL;
+	char *nonblock = NULL;
+
+	char buf[PATH_MAX];
+
+	home = getenv("HOME");
+	if (!home || !*home)
 		return;
 
-	/* if $XDG_DATA_HOME is set and not empty, use $XDG_DATA_HOME/dwm,
-	 * otherwise use ~/.local/share/dwm as autostart script directory
-	 */
+	/* Build preferred autostart dir */
 	xdgdatahome = getenv("XDG_DATA_HOME");
-	if (xdgdatahome != NULL && *xdgdatahome != '\0') {
-		/* space for path segments, separators and nul */
-		pathpfx = ecalloc(1, strlen(xdgdatahome) + strlen(dwmdir) + 2);
-
-		if (sprintf(pathpfx, "%s/%s", xdgdatahome, dwmdir) <= 0) {
-			free(pathpfx);
+	if (xdgdatahome && *xdgdatahome) {
+		if (snprintf(buf, sizeof(buf), "%s/%s", xdgdatahome, dwmdir) >= (int)sizeof(buf))
 			return;
-		}
 	} else {
-		/* space for path segments, separators and nul */
-		pathpfx = ecalloc(1, strlen(home) + strlen(localshare)
-		                     + strlen(dwmdir) + 3);
-
-		if (sprintf(pathpfx, "%s/%s/%s", home, localshare, dwmdir) < 0) {
-			free(pathpfx);
+		if (snprintf(buf, sizeof(buf), "%s/%s/%s", home, localshare, dwmdir) >= (int)sizeof(buf))
 			return;
-		}
 	}
 
-	/* check if the autostart script directory exists */
-	if (! (stat(pathpfx, &sb) == 0 && S_ISDIR(sb.st_mode))) {
-		/* the XDG conformant path does not exist or is no directory
-		 * so we try ~/.dwm instead
-		 */
-		char *pathpfx_new = realloc(pathpfx, strlen(home) + strlen(dwmdir) + 3);
-		if(pathpfx_new == NULL) {
+	pathpfx = strdup(buf);
+	if (!pathpfx)
+		return;
+
+	/* Fallback to ~/.dwm if dir doesn't exist */
+	if (!(stat(pathpfx, &sb) == 0 && S_ISDIR(sb.st_mode))) {
+		if (snprintf(buf, sizeof(buf), "%s/.%s", home, dwmdir) >= (int)sizeof(buf)) {
 			free(pathpfx);
 			return;
 		}
-		pathpfx = pathpfx_new;
-
-		if (sprintf(pathpfx, "%s/.%s", home, dwmdir) <= 0) {
-			free(pathpfx);
-			return;
-		}
-	}
-
-	/* try the blocking script first */
-	path = ecalloc(1, strlen(pathpfx) + strlen(autostartblocksh) + 2);
-	if (sprintf(path, "%s/%s", pathpfx, autostartblocksh) <= 0) {
-		free(path);
 		free(pathpfx);
+		pathpfx = strdup(buf);
+		if (!pathpfx)
+			return;
 	}
 
-	if (access(path, X_OK) == 0)
-		system(path);
+	/* Build script paths */
+	if (snprintf(buf, sizeof(buf), "%s/%s", pathpfx, autostartblocksh) >= (int)sizeof(buf))
+		goto cleanup;
+	block = strdup(buf);
+	if (!block)
+		goto cleanup;
 
-	/* now the non-blocking script */
-	if (sprintf(path, "%s/%s", pathpfx, autostartsh) <= 0) {
-		free(path);
-		free(pathpfx);
-	}
+	if (snprintf(buf, sizeof(buf), "%s/%s", pathpfx, autostartsh) >= (int)sizeof(buf))
+		goto cleanup;
+	nonblock = strdup(buf);
+	if (!nonblock)
+		goto cleanup;
 
-	if (access(path, X_OK) == 0)
-		system(strcat(path, " &"));
+	/* Run them */
+	runscript(block, 1);     /* blocking */
+	runscript(nonblock, 0);  /* non-blocking */
 
+cleanup:
+	free(nonblock);
+	free(block);
 	free(pathpfx);
-	free(path);
+}
+
+void
+runexit(void)
+{
+	const char *home, *xdgdatahome;
+	struct stat sb;
+
+	char *pathpfx  = NULL;
+	char *exitpath = NULL;
+
+	char buf[PATH_MAX];
+
+	home = getenv("HOME");
+	if (!home || !*home)
+		return;
+
+	/* Build preferred autostart dir */
+	xdgdatahome = getenv("XDG_DATA_HOME");
+	if (xdgdatahome && *xdgdatahome) {
+		if (snprintf(buf, sizeof(buf), "%s/%s", xdgdatahome, dwmdir) >= (int)sizeof(buf))
+			return;
+	} else {
+		if (snprintf(buf, sizeof(buf), "%s/%s/%s", home, localshare, dwmdir) >= (int)sizeof(buf))
+			return;
+	}
+
+	pathpfx = strdup(buf);
+	if (!pathpfx)
+		return;
+
+	/* Fallback to ~/.dwm if dir doesn't exist */
+	if (!(stat(pathpfx, &sb) == 0 && S_ISDIR(sb.st_mode))) {
+		if (snprintf(buf, sizeof(buf), "%s/.%s", home, dwmdir) >= (int)sizeof(buf)) {
+			free(pathpfx);
+			return;
+		}
+		free(pathpfx);
+		pathpfx = strdup(buf);
+		if (!pathpfx)
+			return;
+	}
+
+	/* Build script paths */
+	if (snprintf(buf, sizeof(buf), "%s/%s", pathpfx, exitsh) >= (int)sizeof(buf))
+		goto cleanup;
+	exitpath = strdup(buf);
+	if (!exitpath)
+		goto cleanup;
+
+	/* Run them */
+	runscript(exitpath, 1);     /* blocking */
+
+cleanup:
+	free(exitpath);
+	free(pathpfx);
+}
+
+void
+runscript(const char *p, int waitflag)
+{
+	pid_t pid;
+
+	if (!isexecutable(p))
+		return;
+
+	pid = fork();
+	if (pid < 0)
+		return;
+
+	if (pid == 0) {
+		/* child */
+		if (!waitflag) {
+			/* detach a bit: new session + don't keep stdio tied to dwm */
+			setsid();
+			/* redirect stdio to /dev/null */
+			int fd = open("/dev/null", O_RDWR);
+			if (fd >= 0) {
+				dup2(fd, STDIN_FILENO);
+				dup2(fd, STDOUT_FILENO);
+				dup2(fd, STDERR_FILENO);
+				if (fd > 2) close(fd);
+			}
+		}
+		execl(p, p, (char *)NULL);
+		_exit(127);
+	}
+
+	if (waitflag) {
+		/* parent waits */
+		int status;
+		while (waitpid(pid, &status, 0) < 0 && errno == EINTR) { }
+	}
+	/* else: parent returns immediately */
 }
 
 void
@@ -3618,7 +3715,11 @@ main(int argc, char *argv[])
 	scan();
 	runautostart();
 	run();
-	if(restart) execvp(argv[0], argv);
+	if(restart) {
+		execvp(argv[0], argv);
+	} else {
+		runexit();
+	}
 	cleanup();
 	XCloseDisplay(dpy);
 	return EXIT_SUCCESS;
