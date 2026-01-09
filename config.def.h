@@ -17,10 +17,10 @@ static unsigned int showltsymbol   = 1;  /* show layout symbol */
 
 /* systray */
 static       unsigned int showsystray             = 1;  /* 0 means no systray */
-static const unsigned int systraypinning          = 0;  /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static       unsigned int systrayonleft           = 0;  /* 0: systray in the right corner, >0: systray on left of status text */
 static       unsigned int systrayspacing          = 5;  /* systray spacing */
 static       unsigned int systraypadding          = 0;  /* systray pading (detach from bar) */
+static const unsigned int systraypinning          = 0;  /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systraypinningfailfirst = 1;  /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
 
 /* fonts */
@@ -101,10 +101,12 @@ static const Layout layouts[] = {
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
+
+/* status bar name for clickable blocks */
 #define STATUSBAR "dwmblocks"
 
 /* commands */
-static char dmenumon[2]            = "0"; /* component of dmenucmd, manipulated in spawn() */
+static       char dmenumon[2]      = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[]      = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", hexBg, "-nf", hexFg, "-sb", hexSelBg, "-sf", hexSelFg, NULL };
 static const char *termcmd[]       = { "st", NULL };
 static const char scratchpadname[] = "scratchpad";
@@ -144,12 +146,14 @@ ResourcePref resources[] = {
 	{ "alphaTrayBg",    INTEGER, &alphas[SchemeSystray][ColBg]  },
 };
 
-
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
+	/*                              spawn                               */
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_grave,  togglescratch,  {.v = scratchpadcmd } },
+
+	/*                              window management                   */
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
@@ -163,11 +167,15 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
 	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
+
+	/*                              layouts                             */
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
+
+	/*                              tags                                */
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
 	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
@@ -183,6 +191,8 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_7,                      6)
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
+
+	/*                              session control                     */
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 	{ MODKEY|ControlMask|ShiftMask, XK_q,      quit,           {1} },
 };
