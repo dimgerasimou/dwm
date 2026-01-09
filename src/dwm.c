@@ -39,6 +39,7 @@
 #include <X11/Xproto.h>
 #include <X11/Xutil.h>
 #include <X11/Xresource.h>
+#include <X11/XF86keysym.h>
 #ifdef XINERAMA
 #include <X11/extensions/Xinerama.h>
 #endif /* XINERAMA */
@@ -295,6 +296,7 @@ static void sighup(int unused);
 static void sigstatusbar(const Arg *arg);
 static void sigterm(int unused);
 static void spawn(const Arg *arg);
+static void spawnbin(const Arg *arg);
 static int status2dtextwidth(const char *s);
 static void swallow(Client *p, Client *c);
 static Client *swallowingclient(Window w);
@@ -2709,6 +2711,52 @@ spawn(const Arg *arg)
 
 		execvp(((char **)arg->v)[0], (char **)arg->v);
 		die("dwm: execvp '%s' failed:", ((char **)arg->v)[0]);
+	}
+}
+
+void
+spawnbin(const Arg *arg)
+{
+	struct sigaction sa;
+	pid_t pid;
+
+	if (arg->v == dmenucmd)
+		dmenumon[0] = '0' + selmon->num;
+
+	selmon->tagset[selmon->seltags] &= ~scratchtag;
+
+	pid = fork();
+	if (pid < 0) {
+		/* optionally: die("dwm: fork failed:"); */
+		return;
+	}
+	if (pid == 0) {
+		const char *home;
+		char *path;
+		size_t len;
+
+		if (dpy)
+			close(ConnectionNumber(dpy));
+		setsid();
+
+		home = getenv("HOME");
+		if (!home || !home[0])
+			die("dwm: HOME not set");
+
+		sigemptyset(&sa.sa_mask);
+		sa.sa_flags = 0;
+		sa.sa_handler = SIG_DFL;
+		sigaction(SIGCHLD, &sa, NULL);
+
+		len = strlen(home) + 1 + strlen(binpath) + 1 + strlen(((char **)arg->v)[0]) + 1;
+		path = malloc(len);
+		if (!path)
+			die("dwm: malloc failed");
+
+		snprintf(path, len, "%s/%s/%s", home, binpath, ((char **)arg->v)[0]);
+
+		execv(path, (char **)arg->v);
+		die("dwm: execv '%s' failed: %s", path, strerror(errno));
 	}
 }
 
